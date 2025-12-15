@@ -549,130 +549,135 @@ function App() {
   };
 
   const renderHome = () => (
-    <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto px-6 py-12 md:py-20 gap-12">
-      {/* Left Side: Copy */}
-      <div className="w-full md:w-1/2 space-y-8 text-center md:text-left">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 border border-red-200 text-canada-red text-xs font-bold uppercase tracking-wider shadow-sm">
-          <MapleLeaf className="w-4 h-4" />
-          {t.builtIn}
+    <div className="w-full max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-16">
+
+      {/* Hero Section */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-12">
+        {/* Left Side: Copy */}
+        <div className="w-full md:w-1/2 space-y-8 text-center md:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 border border-red-200 text-canada-red text-xs font-bold uppercase tracking-wider shadow-sm">
+            <MapleLeaf className="w-4 h-4" />
+            {t.builtIn}
+          </div>
+
+          <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-sm">
+            {t.title} <span className="text-canada-red">{t.subtitle}</span>
+          </h1>
+
+          <p className="text-xl text-gray-600 max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
+            {t.description}
+          </p>
+
+          <div className="flex flex-col gap-4 max-w-md mx-auto md:mx-0">
+            <div className="bg-white/80 backdrop-blur border border-gray-200 rounded-lg p-4 flex items-start gap-3 text-left shadow-sm">
+              <Shield className="w-5 h-5 text-canada-red mt-1 flex-shrink-0" />
+              <div>
+                <h4 className="font-bold text-gray-900 text-sm">{t.localProcessing}</h4>
+                <p className="text-gray-600 text-xs mt-1">
+                  {t.localProcessingDesc}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-sm">
-          {t.title} <span className="text-canada-red">{t.subtitle}</span>
-        </h1>
+        {/* Right Side: Dashboard / Tool */}
+        <div className="w-full md:w-1/2 max-w-xl">
+          <div className="bg-white rounded-[2rem] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[500px] flex flex-col transition-all duration-300">
 
-        <p className="text-xl text-gray-600 max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
-          {t.description}
-        </p>
+            {/* --- DASHBOARD: SELECT TOOL --- */}
+            {appState === AppState.HOME && (
+              <div className="p-8 h-full bg-gray-50/30 overflow-y-auto custom-scrollbar">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                  Select a Tool <span className="text-lg font-normal text-gray-400">eh?</span>
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {tools.map(tool => (
+                    <button
+                      key={tool.id}
+                      onClick={() => selectTool(tool.id)}
+                      className="flex flex-col items-start p-5 bg-white border border-gray-200 rounded-2xl hover:border-canada-red hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-1 transition-all text-left group"
+                    >
+                      <div className="p-3 bg-red-50 text-canada-red rounded-xl mb-3 group-hover:bg-canada-red group-hover:text-white transition-colors">
+                        <tool.icon size={24} />
+                      </div>
+                      <h3 className="font-bold text-gray-800">{tool.title}</h3>
+                      <p className="text-xs text-gray-500 mt-1">{tool.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-        <div className="flex flex-col gap-4 max-w-md mx-auto md:mx-0">
-          <div className="bg-white/80 backdrop-blur border border-gray-200 rounded-lg p-4 flex items-start gap-3 text-left shadow-sm">
-            <Shield className="w-5 h-5 text-canada-red mt-1 flex-shrink-0" />
-            <div>
-              <h4 className="font-bold text-gray-900 text-sm">{t.localProcessing}</h4>
-              <p className="text-gray-600 text-xs mt-1">
-                {t.localProcessingDesc}
-              </p>
-            </div>
+            {/* --- TOOL INTERFACE (SELECTING) --- */}
+            {appState === AppState.SELECTING && (
+              <>
+                <div className="absolute top-4 left-4 z-20">
+                  {!file && (
+                    <button onClick={handleReset} className="flex items-center gap-1 text-gray-500 hover:text-gray-800 text-sm font-medium bg-white/80 backdrop-blur px-3 py-1.5 rounded-full shadow-sm hover:shadow border border-transparent hover:border-gray-200 transition-all">
+                      <ArrowLeft size={16} /> {t.backToHome}
+                    </button>
+                  )}
+                </div>
+                {renderToolInterface()}
+              </>
+            )}
+
+            {/* --- PROCESSING --- */}
+            {appState === AppState.PROCESSING && (
+              <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-8">
+                <div className="animate-spin text-canada-red mb-4">
+                  <MapleLeaf className="w-12 h-12" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800">{t.working}</h3>
+                <p className="text-gray-500 mt-2">{t.workingDesc}</p>
+              </div>
+            )}
+
+            {/* --- DONE --- */}
+            {appState === AppState.DONE && downloadUrl && (
+              <div className="flex flex-col h-full items-center justify-center p-10 text-center bg-gradient-to-br from-red-50/50 to-white">
+                <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 animate-bounce">
+                  <CheckCircle2 size={40} />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">{t.doneTitle}</h3>
+                <p className="text-gray-500 mb-8 max-w-xs">{t.doneDesc}</p>
+                <div className="space-y-3 w-full max-w-xs">
+                  <a href={downloadUrl} download={downloadName} className="flex items-center justify-center gap-2 w-full bg-canada-red hover:bg-canada-darkRed text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-red-500/30 transition-all hover:-translate-y-0.5">
+                    <Download size={20} /> {t.download}
+                  </a>
+                  <button onClick={handleReset} className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-6 py-3 rounded-full font-medium transition-colors">
+                    {t.doAnother}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {appState === AppState.ERROR && (
+              <div className="flex flex-col h-full items-center justify-center p-10 text-center relative">
+                <button onClick={handleReset} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                  <X size={24} />
+                </button>
+                <div className="w-16 h-16 bg-red-100 text-canada-red rounded-full flex items-center justify-center mb-6">
+                  <AlertCircle size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">{t.errorTitle}</h3>
+                <p className="text-gray-500 mb-8">
+                  {(errorKey && typeof t[errorKey] === 'string') ? (t[errorKey] as string) : t.genericError}
+                </p>
+                <button onClick={handleReset} className="bg-gray-800 hover:bg-black text-white px-8 py-3 rounded-full font-bold transition-all">
+                  {t.backToHome}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Right Side: Dashboard / Tool */}
-      <div className="w-full md:w-1/2 max-w-xl">
-        <div className="bg-white rounded-[2rem] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[500px] flex flex-col transition-all duration-300">
-
-          {/* --- DASHBOARD: SELECT TOOL --- */}
-          {appState === AppState.HOME && (
-            <div className="p-8 h-full bg-gray-50/30 overflow-y-auto custom-scrollbar">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                Select a Tool <span className="text-lg font-normal text-gray-400">eh?</span>
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {tools.map(tool => (
-                  <button
-                    key={tool.id}
-                    onClick={() => selectTool(tool.id)}
-                    className="flex flex-col items-start p-5 bg-white border border-gray-200 rounded-2xl hover:border-canada-red hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-1 transition-all text-left group"
-                  >
-                    <div className="p-3 bg-red-50 text-canada-red rounded-xl mb-3 group-hover:bg-canada-red group-hover:text-white transition-colors">
-                      <tool.icon size={24} />
-                    </div>
-                    <h3 className="font-bold text-gray-800">{tool.title}</h3>
-                    <p className="text-xs text-gray-500 mt-1">{tool.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* --- TOOL INTERFACE (SELECTING) --- */}
-          {appState === AppState.SELECTING && (
-            <>
-              <div className="absolute top-4 left-4 z-20">
-                {!file && (
-                  <button onClick={handleReset} className="flex items-center gap-1 text-gray-500 hover:text-gray-800 text-sm font-medium bg-white/80 backdrop-blur px-3 py-1.5 rounded-full shadow-sm hover:shadow border border-transparent hover:border-gray-200 transition-all">
-                    <ArrowLeft size={16} /> {t.backToHome}
-                  </button>
-                )}
-              </div>
-              {renderToolInterface()}
-            </>
-          )}
-
-          {/* --- PROCESSING --- */}
-          {appState === AppState.PROCESSING && (
-            <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-8">
-              <div className="animate-spin text-canada-red mb-4">
-                <MapleLeaf className="w-12 h-12" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800">{t.working}</h3>
-              <p className="text-gray-500 mt-2">{t.workingDesc}</p>
-            </div>
-          )}
-
-          {/* --- DONE --- */}
-          {appState === AppState.DONE && downloadUrl && (
-            <div className="flex flex-col h-full items-center justify-center p-10 text-center bg-gradient-to-br from-red-50/50 to-white">
-              <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 animate-bounce">
-                <CheckCircle2 size={40} />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">{t.doneTitle}</h3>
-              <p className="text-gray-500 mb-8 max-w-xs">{t.doneDesc}</p>
-              <div className="space-y-3 w-full max-w-xs">
-                <a href={downloadUrl} download={downloadName} className="flex items-center justify-center gap-2 w-full bg-canada-red hover:bg-canada-darkRed text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-red-500/30 transition-all hover:-translate-y-0.5">
-                  <Download size={20} /> {t.download}
-                </a>
-                <button onClick={handleReset} className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-6 py-3 rounded-full font-medium transition-colors">
-                  {t.doAnother}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {appState === AppState.ERROR && (
-            <div className="flex flex-col h-full items-center justify-center p-10 text-center relative">
-              <button onClick={handleReset} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <X size={24} />
-              </button>
-              <div className="w-16 h-16 bg-red-100 text-canada-red rounded-full flex items-center justify-center mb-6">
-                <AlertCircle size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.errorTitle}</h3>
-              <p className="text-gray-500 mb-8">
-                {(errorKey && typeof t[errorKey] === 'string') ? (t[errorKey] as string) : t.genericError}
-              </p>
-              <button onClick={handleReset} className="bg-gray-800 hover:bg-black text-white px-8 py-3 rounded-full font-bold transition-all">
-                {t.backToHome}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="max-w-3xl text-left text-gray-600 leading-relaxed space-y-4">
-        <h2 className="text-2xl font-bold text-gray-900">{t.builtIn}</h2>
-        <p>{t.seo.privacyDesc}</p>
+      {/* Trust / Privacy Section (Below Hero) */}
+      <div className="max-w-3xl mx-auto text-center space-y-4">
+        <h2 className="text-3xl font-bold text-gray-900">{t.builtIn}</h2>
+        <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">{t.seo.privacyDesc}</p>
       </div>
     </div>
   );
