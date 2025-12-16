@@ -34,7 +34,7 @@ export const SupportPage: React.FC<PageProps> = ({ lang }) => {
         <>
             <SEO title={translations[lang].seo.supportTitle} description={translations[lang].seo.supportDesc} canonicalPath="/support" schema={supportSchema} />
             <PageLayout title={translations[lang].navSupport} icon={<Coffee size={32} />}>
-                <div className="text-center text-gray-600 space-y-8">
+                <div className="text-center text-gray-600 dark:text-gray-400 space-y-8">
                     <p className="text-lg leading-relaxed max-w-2xl mx-auto">
                         {t.supportPage.content}
                     </p>
@@ -50,12 +50,12 @@ export const SupportPage: React.FC<PageProps> = ({ lang }) => {
 
                 {/* FAQ Section */}
                 <div className="mt-16 text-left max-w-3xl mx-auto">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">Frequently Asked Questions</h2>
                     <div className="space-y-6">
                         {t.supportPage.faq.map((item, i) => (
-                            <div key={i} className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                                <h3 className="font-bold text-lg text-gray-900 mb-2">{item.question}</h3>
-                                <p className="text-gray-600">{item.answer}</p>
+                            <div key={i} className="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 border border-gray-100 dark:border-gray-600">
+                                <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-2">{item.question}</h3>
+                                <p className="text-gray-600 dark:text-gray-400">{item.answer}</p>
                             </div>
                         ))}
                     </div>

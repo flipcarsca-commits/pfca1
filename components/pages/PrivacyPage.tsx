@@ -22,14 +22,14 @@ export const PrivacyPage: React.FC<PageProps> = ({ lang }) => {
         <>
             <SEO title={t.seo.privacyTitle} description={t.seo.privacyDesc} canonicalPath="/privacy" schema={privacySchema} />
             <PageLayout title={t.privacyTitle} icon={<Shield size={32} />}>
-                <div className="prose prose-lg max-w-none text-gray-600">
+                <div className="prose prose-lg max-w-none text-gray-600 dark:text-gray-400">
                     <p className="mb-6">{t.privacyText1}</p>
                     <p className="mb-6">{t.privacyText2}</p>
-                    <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 flex gap-4 items-start">
-                        <Shield className="text-blue-600 shrink-0 mt-1" />
+                    <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border border-blue-100 dark:border-blue-800 flex gap-4 items-start">
+                        <Shield className="text-blue-600 dark:text-blue-400 shrink-0 mt-1" />
                         <div>
-                            <h4 className="font-bold text-blue-900 mb-1">Local Processing Guarantee</h4>
-                            <p className="text-sm text-blue-800">We do not operate backend servers for file processing. Everything happens right here in your browser using WebAssembly.</p>
+                            <h4 className="font-bold text-blue-900 dark:text-blue-300 mb-1">Local Processing Guarantee</h4>
+                            <p className="text-sm text-blue-800 dark:text-blue-400">We do not operate backend servers for file processing. Everything happens right here in your browser using WebAssembly.</p>
                         </div>
                     </div>
                 </div>
