@@ -197,13 +197,17 @@ export const makePdfFillable = async (originalFile: File, pageIndicesToFill: num
 
 export interface FormField {
   id: string;
-  type: 'text' | 'checkbox';
+  type: 'text' | 'checkbox' | 'signature';
   pageIndex: number;
   x: number; // Percentage 0-100
   y: number; // Percentage 0-100
   width: number; // Percentage
   height: number; // Percentage
-  label?: string;
+  label?: string; // Internal ID Label
+  name?: string; // Export Value Name
+  required?: boolean;
+  readOnly?: boolean;
+  toolTip?: string;
 }
 
 export const saveFormFieldsToPdf = async (originalFile: File, fields: FormField[]): Promise<Uint8Array> => {
@@ -217,23 +221,41 @@ export const saveFormFieldsToPdf = async (originalFile: File, fields: FormField[
       const { width: pageWidth, height: pageHeight } = page.getSize();
 
       // Convert percentages to points
-      // x is from left, y is from TOP (usually UI) but PDF is from BOTTOM.
-      // However, usually UI overlay overlays the element.
-      // If we assume x,y are top-left percentage relative to page:
       const x = (field.x / 100) * pageWidth;
-      // PDF y starts at bottom. So top-left y in PDF coords is:
-      // pageHeight - (y_percentage / 100 * pageHeight) - height_in_points
-
       const w = (field.width / 100) * pageWidth;
       const h = (field.height / 100) * pageHeight;
       const y = pageHeight - ((field.y / 100) * pageHeight) - h;
 
-      if (field.type === 'text') {
-        const textField = form.createTextField(field.id);
-        textField.addToPage(page, { x, y, width: w, height: h, borderWidth: 1, borderColor: rgb(0, 0, 0) });
+      const fieldName = field.name || field.id; // Use custom name if provided
+
+      if (field.type === 'text' || field.type === 'signature') {
+        const textField = form.createTextField(fieldName);
+
+        // Apply properties
+        if (field.label) textField.setText(field.label); // Default value? or Just internal? Let's treat label as initial text if simple
+        // Actually label property in PDF usually implies Tooltip/AlternateName, but we have toolTip too.
+
+        textField.addToPage(page, {
+          x,
+          y,
+          width: w,
+          height: h,
+          borderWidth: field.type === 'signature' ? 0 : 1,
+          borderColor: rgb(0, 0, 0),
+          backgroundColor: field.type === 'signature' ? rgb(0.95, 0.95, 0.95) : undefined
+        });
+
+        if (field.required) textField.enableRequired(); // Correct method
+        if (field.readOnly) textField.enableReadOnly();
+        // pdf-lib doesn't have direct setTooltip in low-level, but usually it maps to AlternateName
+        // cast to any to avoid strict type checks if versions differ, or use existing methods
+        // textField.acroField.setPartialName(fieldName); 
+
       } else if (field.type === 'checkbox') {
-        const checkBox = form.createCheckBox(field.id);
+        const checkBox = form.createCheckBox(fieldName);
         checkBox.addToPage(page, { x, y, width: w, height: h, borderWidth: 1, borderColor: rgb(0, 0, 0) });
+        if (field.required) checkBox.enableRequired();
+        if (field.readOnly) checkBox.enableReadOnly();
       }
     } catch (e) {
       console.warn("Failed to add field", field, e);

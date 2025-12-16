@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Download, FileText, X, AlertCircle, CheckCircle2, Shield, Trash2, RotateCw, Image, BookOpen, ArrowLeft, PenTool, RotateCcw, RefreshCcw, ScanLine, ZoomIn, ZoomOut, Move } from 'lucide-react';
+import { Download, FileText, X, AlertCircle, CheckCircle2, Shield, Trash2, RotateCw, Image, BookOpen, ArrowLeft, PenTool, RotateCcw, RefreshCcw, ScanLine, ZoomIn, ZoomOut, Move, History, Undo2, Redo2, Copy } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import { Rnd } from 'react-rnd';
@@ -7,9 +7,17 @@ import { SortablePdfPageThumbnail } from './components/SortablePdfPageThumbnail'
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { MapleLeaf } from './components/MapleLeaf';
-import { PricingPage, PrivacyPage, TermsPage, SorryPolicyPage, HowToPage, SupportLocalPage, MakePdfFillablePage } from './components/StaticPages';
+import { PricingPage } from './components/pages/PricingPage';
+import { PrivacyPage } from './components/pages/PrivacyPage';
+import { TermsPage } from './components/pages/TermsPage';
+import { SorryPage as SorryPolicyPage } from './components/pages/SorryPage';
+import { HowToPage } from './components/pages/HowToPage';
+import { SupportPage as SupportLocalPage } from './components/pages/SupportPage';
+import { MakePdfFillablePage } from './components/pages/MakePdfFillablePage';
 import { PdfPageThumbnail } from './components/PdfPageThumbnail';
 import { loadPdfDocument, getPdfJsDocument, deletePagesFromPdf, rotatePdfPages, convertHeicToPdf, convertPdfToEpub, convertEpubToPdf, formatFileSize, makePdfFillable, initPdfWorker, extractTextWithOcr, makeSearchablePdf, reorderPdfPages, saveFormFieldsToPdf, FormField } from './utils/pdfUtils';
+import { saveSession, loadSession, clearSession, AppSessionState } from './utils/storageUtils';
+import { FormPropertiesPanel } from './components/FormPropertiesPanel';
 
 // Initialize PDF.js worker early to ensure thumbnails can render
 initPdfWorker();
@@ -73,9 +81,13 @@ function App() {
   // Form Builder State
   const [formFields, setFormFields] = useState<FormField[]>([]);
   const [currentFormPage, setCurrentFormPage] = useState<number>(0);
-  const [formZoom, setFormZoom] = useState<number>(1);
+  const [formZoom, setFormZoom] = useState<number>(1.0);
+  const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
+  const [history, setHistory] = useState<FormField[][]>([[]]);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
 
-  // Tool Specific State
+  // Constants
+  const MIN_FILE_SIZE = 100; // bytes
   const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set());
   const [rotations, setRotations] = useState<Record<number, number>>({});
   const lastSelectedPageRef = useRef<number | null>(null);
@@ -86,6 +98,103 @@ function App() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const t = translations[lang];
+
+  // Autosave State
+  const [hasSavedSession, setHasSavedSession] = useState<boolean>(false);
+  const savedSessionData = useRef<AppSessionState | null>(null);
+
+  // Load session on mount
+  useEffect(() => {
+    loadSession().then(session => {
+      if (session && session.file) {
+        savedSessionData.current = session;
+        setHasSavedSession(true);
+      }
+    });
+  }, []);
+
+  // Autosave Effect
+  useEffect(() => {
+    if (!file) {
+      // Only clear if we explicitly want to (e.g. user Reset). 
+      // For now, let's not auto-clear on null file to avoid race conditions on reload vs mount.
+      // actually, handleReset clears file.
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      saveSession({
+        file,
+        currentTool: currentTool as string,
+        selectedPages: Array.from(selectedPages),
+        rotations,
+        ocrText,
+        items,
+        formFields,
+        timestamp: Date.now()
+      });
+    }, 1000); // Debounce 1s
+
+    return () => clearTimeout(timer);
+  }, [file, currentTool, selectedPages, rotations, ocrText, items, formFields]);
+
+  const handleResume = async () => {
+    const session = savedSessionData.current;
+    if (!session) return;
+
+    try {
+      setFile(session.file);
+      setCurrentTool(session.currentTool as ToolType);
+      setSelectedPages(new Set(session.selectedPages));
+      setRotations(session.rotations);
+      setOcrText(session.ocrText);
+      setItems(session.items);
+      setFormFields(session.formFields);
+
+      // Re-initialize PDF basics
+      const { pageCount } = await loadPdfDocument(session.file);
+      setPageCount(pageCount);
+      const jsDoc = await getPdfJsDocument(session.file);
+      setPdfJsDoc(jsDoc);
+
+      // Restore State
+      if (session.currentTool === ToolType.OCR) {
+        setAppState(AppState.EDITING_OCR);
+      } else if (session.currentTool === ToolType.MAKE_FILLABLE) { // Assuming saved during explicit Fillable usage
+        // The saved state might be "EDITING_FORM" logically but `currentTool` is MAKE_FILLABLE.
+        // In handleAction specific tools set specific states. 
+        // If formFields has items, we probably want EDITING_FORM.
+        if (session.formFields.length > 0) {
+          setAppState(AppState.EDITING_FORM);
+          // Also need currentFormPage? We didn't save it. Default 0 is fine.
+          setCurrentFormPage(0);
+        } else {
+          setAppState(AppState.SELECTING);
+        }
+      } else if (session.currentTool === ToolType.ORGANIZE) {
+        // Organize is usually SELECTING/Visual but has drag/drop context
+        // We render renderToolInterface which handles ORGANIZE logic if isVisualTool is true
+        setAppState(AppState.SELECTING);
+      } else if (session.currentTool) {
+        setAppState(AppState.SELECTING);
+      } else {
+        setAppState(AppState.HOME);
+      }
+
+      setHasSavedSession(false); // Hide button after resume
+    } catch (e) {
+      console.error("Failed to resume", e);
+      alert(t.genericError);
+    }
+  };
+
+  const clearAutosave = () => {
+    clearSession();
+    setHasSavedSession(false);
+  };
+
+  // Original handleReset needs to clear session
+
 
   // Memoize page indices array to avoid recreating on every render
   const sensors = useSensors(
@@ -423,6 +532,7 @@ function App() {
   }, []);
 
   const handleReset = useCallback(() => {
+    clearAutosave();
     // Return to landing page state for the tool, not home
     if (currentTool) {
       setFile(null);
@@ -809,137 +919,158 @@ function App() {
   };
 
   const renderHome = () => (
-    <div className="w-full max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-16">
-
-      {/* Hero Section */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-12">
-        {/* Left Side: Copy */}
-        <div className="w-full md:w-1/2 space-y-8 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 border border-red-200 text-canada-red text-xs font-bold uppercase tracking-wider shadow-sm">
-            <MapleLeaf className="w-4 h-4" />
-            {t.builtIn}
-          </div>
-
-          <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-sm">
-            {t.title} <span className="text-canada-red">{t.subtitle}</span>
-          </h1>
-
-          <p className="text-xl text-gray-600 max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
-            {t.description}
-          </p>
-
-          <div className="flex flex-col gap-4 max-w-md mx-auto md:mx-0">
-            <div className="bg-white/80 backdrop-blur border border-gray-200 rounded-lg p-4 flex items-start gap-3 text-left shadow-sm">
-              <Shield className="w-5 h-5 text-canada-red mt-1 flex-shrink-0" />
-              <div>
-                <h4 className="font-bold text-gray-900 text-sm">{t.localProcessing}</h4>
-                <p className="text-gray-600 text-xs mt-1">
-                  {t.localProcessingDesc}
-                </p>
-              </div>
+    <div className="w-full max-w-4xl mx-auto px-6 py-12 text-center">
+      {hasSavedSession && (
+        <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
+              <History size={24} />
+            </div>
+            <div className="text-left">
+              <h3 className="font-bold text-gray-800">Unsaved work found</h3>
+              <p className="text-sm text-gray-600">You have a previous session available.</p>
             </div>
           </div>
-        </div>
-
-        {/* Right Side: Dashboard / Tool */}
-        <div className="w-full md:w-1/2 max-w-xl">
-          <div className="bg-white rounded-[2rem] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[500px] flex flex-col transition-all duration-300">
-
-            {/* --- DASHBOARD: SELECT TOOL --- */}
-            {appState === AppState.HOME && (
-              <div className="p-8 h-full bg-gray-50/30 overflow-y-auto custom-scrollbar">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                  Select a Tool <span className="text-lg font-normal text-gray-400">eh?</span>
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {tools.map(tool => (
-                    <button
-                      key={tool.id}
-                      onClick={() => selectTool(tool.id)}
-                      className="flex flex-col items-start p-5 bg-white border border-gray-200 rounded-2xl hover:border-canada-red hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-1 transition-all text-left group"
-                    >
-                      <div className="p-3 bg-red-50 text-canada-red rounded-xl mb-3 group-hover:bg-canada-red group-hover:text-white transition-colors">
-                        <tool.icon size={24} />
-                      </div>
-                      <h3 className="font-bold text-gray-800">{tool.title}</h3>
-                      <p className="text-xs text-gray-500 mt-1">{tool.desc}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* --- TOOL INTERFACE (SELECTING) --- */}
-            {appState === AppState.SELECTING && (
-              <>
-                <div className="absolute top-4 left-4 z-20">
-                  {!file && (
-                    <button onClick={handleReset} className="flex items-center gap-1 text-gray-500 hover:text-gray-800 text-sm font-medium bg-white/80 backdrop-blur px-3 py-1.5 rounded-full shadow-sm hover:shadow border border-transparent hover:border-gray-200 transition-all">
-                      <ArrowLeft size={16} /> {t.backToHome}
-                    </button>
-                  )}
-                </div>
-                {renderToolInterface()}
-              </>
-            )}
-
-            {/* --- PROCESSING --- */}
-            {appState === AppState.PROCESSING && (
-              <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-8">
-                <div className="animate-spin text-canada-red mb-4">
-                  <MapleLeaf className="w-12 h-12" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800">{t.working}</h3>
-                <p className="text-gray-500 mt-2">{t.workingDesc}</p>
-              </div>
-            )}
-
-            {/* --- DONE --- */}
-            {appState === AppState.DONE && downloadUrl && (
-              <div className="flex flex-col h-full items-center justify-center p-10 text-center bg-gradient-to-br from-red-50/50 to-white">
-                <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 animate-bounce">
-                  <CheckCircle2 size={40} />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">{t.doneTitle}</h3>
-                <p className="text-gray-500 mb-8 max-w-xs">{t.doneDesc}</p>
-                <div className="space-y-3 w-full max-w-xs">
-                  <a href={downloadUrl} download={downloadName} className="flex items-center justify-center gap-2 w-full bg-canada-red hover:bg-canada-darkRed text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-red-500/30 transition-all hover:-translate-y-0.5">
-                    <Download size={20} /> {t.download}
-                  </a>
-                  <button onClick={handleReset} className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-6 py-3 rounded-full font-medium transition-colors">
-                    {t.doAnother}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {appState === AppState.ERROR && (
-              <div className="flex flex-col h-full items-center justify-center p-10 text-center relative">
-                <button onClick={handleReset} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                  <X size={24} />
-                </button>
-                <div className="w-16 h-16 bg-red-100 text-canada-red rounded-full flex items-center justify-center mb-6">
-                  <AlertCircle size={32} />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">{t.errorTitle}</h3>
-                <p className="text-gray-500 mb-8">
-                  {(errorKey && typeof t[errorKey] === 'string') ? (t[errorKey] as string) : t.genericError}
-                </p>
-                <button onClick={handleReset} className="bg-gray-800 hover:bg-black text-white px-8 py-3 rounded-full font-bold transition-all">
-                  {t.backToHome}
-                </button>
-              </div>
-            )}
+          <div className="flex gap-2">
+            <button onClick={clearAutosave} className="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium text-sm">Dismiss</button>
+            <button onClick={handleResume} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-md transition-colors">
+              Resume Work
+            </button>
           </div>
+        </div>
+      )}
+
+      <img
+        src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Beaming%20Face%20with%20Smiling%20Eyes.png"
+        alt="Friendly Face"
+        className="w-24 h-24 mx-auto mb-6 hover:scale-110 transition-transform duration-300"
+      />  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 border border-red-200 text-canada-red text-xs font-bold uppercase tracking-wider shadow-sm">
+        <MapleLeaf className="w-4 h-4" />
+        {t.builtIn}
+      </div>
+
+      <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-sm">
+        {t.title} <span className="text-canada-red">{t.subtitle}</span>
+      </h1>
+
+      <p className="text-xl text-gray-600 max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
+        {t.description}
+      </p>
+
+      <div className="flex flex-col gap-4 max-w-md mx-auto md:mx-0">
+        <div className="bg-white/80 backdrop-blur border border-gray-200 rounded-lg p-4 flex items-start gap-3 text-left shadow-sm">
+          <Shield className="w-5 h-5 text-canada-red mt-1 flex-shrink-0" />
+          <div>
+            <h4 className="font-bold text-gray-900 text-sm">{t.localProcessing}</h4>
+            <p className="text-gray-600 text-xs mt-1">
+              {t.localProcessingDesc}
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+      {/* Right Side: Dashboard / Tool */}
+      <div className="w-full md:w-1/2 max-w-xl">
+        <div className="bg-white rounded-[2rem] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[500px] flex flex-col transition-all duration-300">
+
+          {/* --- DASHBOARD: SELECT TOOL --- */}
+          {appState === AppState.HOME && (
+            <div className="p-8 h-full bg-gray-50/30 overflow-y-auto custom-scrollbar">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                Select a Tool <span className="text-lg font-normal text-gray-400">eh?</span>
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {tools.map(tool => (
+                  <button
+                    key={tool.id}
+                    onClick={() => selectTool(tool.id)}
+                    className="flex flex-col items-start p-5 bg-white border border-gray-200 rounded-2xl hover:border-canada-red hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-1 transition-all text-left group"
+                  >
+                    <div className="p-3 bg-red-50 text-canada-red rounded-xl mb-3 group-hover:bg-canada-red group-hover:text-white transition-colors">
+                      <tool.icon size={24} />
+                    </div>
+                    <h3 className="font-bold text-gray-800">{tool.title}</h3>
+                    <p className="text-xs text-gray-500 mt-1">{tool.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* --- TOOL INTERFACE (SELECTING) --- */}
+          {appState === AppState.SELECTING && (
+            <>
+              <div className="absolute top-4 left-4 z-20">
+                {!file && (
+                  <button onClick={handleReset} className="flex items-center gap-1 text-gray-500 hover:text-gray-800 text-sm font-medium bg-white/80 backdrop-blur px-3 py-1.5 rounded-full shadow-sm hover:shadow border border-transparent hover:border-gray-200 transition-all">
+                    <ArrowLeft size={16} /> {t.backToHome}
+                  </button>
+                )}
+              </div>
+              {renderToolInterface()}
+            </>
+          )}
+
+          {/* --- PROCESSING --- */}
+          {appState === AppState.PROCESSING && (
+            <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-8">
+              <div className="animate-spin text-canada-red mb-4">
+                <MapleLeaf className="w-12 h-12" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">{t.working}</h3>
+              <p className="text-gray-500 mt-2">{t.workingDesc}</p>
+            </div>
+          )}
+
+          {/* --- DONE --- */}
+          {appState === AppState.DONE && downloadUrl && (
+            <div className="flex flex-col h-full items-center justify-center p-10 text-center bg-gradient-to-br from-red-50/50 to-white">
+              <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 animate-bounce">
+                <CheckCircle2 size={40} />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">{t.doneTitle}</h3>
+              <p className="text-gray-500 mb-8 max-w-xs">{t.doneDesc}</p>
+              <div className="space-y-3 w-full max-w-xs">
+                <a href={downloadUrl} download={downloadName} className="flex items-center justify-center gap-2 w-full bg-canada-red hover:bg-canada-darkRed text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-red-500/30 transition-all hover:-translate-y-0.5">
+                  <Download size={20} /> {t.download}
+                </a>
+                <button onClick={handleReset} className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-6 py-3 rounded-full font-medium transition-colors">
+                  {t.doAnother}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* --- ERROR --- */}
+          {appState === AppState.ERROR && (
+            <div className="flex flex-col h-full items-center justify-center p-10 text-center relative">
+              <button onClick={handleReset} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <X size={24} />
+              </button>
+              <div className="w-16 h-16 bg-red-100 text-canada-red rounded-full flex items-center justify-center mb-6">
+                <AlertCircle size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.errorTitle}</h3>
+              <p className="text-gray-500 mb-8">
+                {(errorKey && typeof t[errorKey] === 'string') ? (t[errorKey] as string) : t.genericError}
+              </p>
+              <button onClick={handleReset} className="bg-gray-800 hover:bg-black text-white px-8 py-3 rounded-full font-bold transition-all">
+                {t.backToHome}
+              </button>
+            </div>
+          )}
+
         </div>
       </div>
 
       {/* Trust / Privacy Section (Below Hero) */}
       <div className="max-w-3xl mx-auto text-center space-y-4">
         <h2 className="text-3xl font-bold text-gray-900">{t.builtIn}</h2>
-        <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">{t.seo.privacyDesc}</p>
+        <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">{t.privacyText1}</p>
       </div>
-    </div>
+
+    </div >
   );
 
   const renderFeaturePage = () => {
@@ -1182,7 +1313,32 @@ function App() {
   const renderFormEditor = () => {
     if (!file || !pdfJsDoc) return null;
 
-    const addField = (type: 'text' | 'checkbox') => {
+    // History Helper
+    const pushToHistory = (newFields: FormField[]) => {
+      const newHistory = history.slice(0, historyIndex + 1);
+      newHistory.push(newFields);
+      setHistory(newHistory);
+      setHistoryIndex(newHistory.length - 1);
+      setFormFields(newFields);
+    };
+
+    const undo = () => {
+      if (historyIndex > 0) {
+        const newIndex = historyIndex - 1;
+        setHistoryIndex(newIndex);
+        setFormFields(history[newIndex]);
+      }
+    };
+
+    const redo = () => {
+      if (historyIndex < history.length - 1) {
+        const newIndex = historyIndex + 1;
+        setHistoryIndex(newIndex);
+        setFormFields(history[newIndex]);
+      }
+    };
+
+    const addField = (type: 'text' | 'checkbox' | 'signature') => {
       const newField: FormField = {
         id: `${type}_${Date.now()}`,
         type,
@@ -1191,21 +1347,60 @@ function App() {
         y: 40, // Default 40% from top
         width: type === 'checkbox' ? 5 : 20,
         height: type === 'checkbox' ? 3 : 5,
+        name: `${type}_${formFields.length + 1}`
       };
-      setFormFields([...formFields, newField]);
+      pushToHistory([...formFields, newField]);
+      setSelectedFieldId(newField.id);
     };
 
     const updateField = (id: string, updates: Partial<FormField>) => {
-      setFormFields(fields => fields.map(f => f.id === id ? { ...f, ...updates } : f));
+      const newFields = formFields.map(f => f.id === id ? { ...f, ...updates } : f);
+      pushToHistory(newFields);
+    };
+
+    // For property updates that happen frequently (like typing), consider debouncing or separating "commit" from state update
+    // For now, fast updates are fine but might bloat history. 
+    // Optimization: separate setFormFields for typing vs pushToHistory for blur? 
+    // Let's keep it simple: Property Panel calls this specific updater which we can make silent or history-pushing.
+    // Actually, let's make the PropertyPanel callback update state directly, and only push to history on blur? 
+    // For simplicity, we'll just push history on every change for now, or maybe just `setFormFields` and have a manual "save state" mechanism? 
+    // Better: split updateField into `updateBitmap` (no history) and `commitUpdate` (history).
+    // Compromise: Property panel updates are live. Drag/Resize updates push history on Stop.
+
+    const updateFieldProperties = (id: string, updates: Partial<FormField>) => {
+      // Just update state, don't push history for every keystroke? 
+      // We need persistence. Let's update state directly and maybe debounce history?
+      // Let's just update state using setFormFields and NOT push history for now to avoid lag, 
+      // but that breaks Undo for properties. 
+      // Let's push history. It's an array of objects, fairly cheap for small forms.
+      const newFields = formFields.map(f => f.id === id ? { ...f, ...updates } : f);
+      // We refrain from pushing history on every keystroke if possible, but for 'required' toggle it's fine.
+      // For text input, it might be too much. 
+      // TODO: Optimize if slow.
+      pushToHistory(newFields);
     };
 
     const removeField = (id: string) => {
-      setFormFields(fields => fields.filter(f => f.id !== id));
+      const newFields = formFields.filter(f => f.id !== id);
+      pushToHistory(newFields);
+      if (selectedFieldId === id) setSelectedFieldId(null);
+    };
+
+    const duplicateField = (id: string) => {
+      const field = formFields.find(f => f.id === id);
+      if (!field) return;
+      const newField: FormField = {
+        ...field,
+        id: `${field.type}_${Date.now()}`,
+        x: field.x + 2,
+        y: field.y + 2,
+        name: `${field.name}_copy`
+      };
+      pushToHistory([...formFields, newField]);
+      setSelectedFieldId(newField.id);
     };
 
     const downloadForm = async () => {
-      // Generate PDF with fields
-      // Show processing state locally if needed, or just do it
       const blob = await saveFormFieldsToPdf(file, formFields);
       const url = URL.createObjectURL(new Blob([blob as BlobPart], { type: 'application/pdf' }));
       const a = document.createElement('a');
@@ -1221,25 +1416,36 @@ function App() {
     const pageFields = formFields.filter(f => f.pageIndex === currentFormPage);
     const baseWidth = 800;
     const currentWidth = baseWidth * formZoom;
-    // Aspect ratio approximation (Letter). 
-    // Ideally we get this from the PDF page itself, but PdfPageThumbnail handles internal aspect. 
-    // We just need a consistent height for the % calc loop.
-    // Let's assume consistent aspect for the Rnd container scaling.
-    const approxAspectRatio = 1.414;
+    const approxAspectRatio = 1.414; // A4/Letter approx
     const currentHeight = currentWidth * approxAspectRatio;
+
+    const selectedField = formFields.find(f => f.id === selectedFieldId);
 
     return (
       <div className="w-full max-w-7xl mx-auto px-6 py-12 flex flex-col h-[85vh]">
         {/* Toolbar */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6 flex justify-between items-center">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6 flex justify-between items-center z-20 relative">
           <div className="flex items-center gap-4">
             <h2 className="text-xl font-bold text-gray-700">{t.fbTitle}</h2>
             <div className="h-6 w-px bg-gray-200"></div>
-            <button onClick={() => addField('text')} className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors">
-              <FileText size={18} /> {t.fbAddText}
+
+            <button onClick={() => addField('text')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors text-sm">
+              <FileText size={16} /> {t.fbAddText}
             </button>
-            <button onClick={() => addField('checkbox')} className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors">
-              <CheckCircle2 size={18} /> {t.fbAddCheckbox}
+            <button onClick={() => addField('checkbox')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors text-sm">
+              <CheckCircle2 size={16} /> {t.fbAddCheckbox}
+            </button>
+            <button onClick={() => addField('signature')} className="flex items-center gap-2 px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg font-medium transition-colors text-sm">
+              <PenTool size={16} /> Sign
+            </button>
+
+            <div className="h-6 w-px bg-gray-200 mx-2"></div>
+
+            <button onClick={undo} disabled={historyIndex <= 0} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed" title="Undo">
+              <Undo2 size={18} />
+            </button>
+            <button onClick={redo} disabled={historyIndex >= history.length - 1} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed" title="Redo">
+              <Redo2 size={18} />
             </button>
 
             <div className="h-6 w-px bg-gray-200 mx-2"></div>
@@ -1281,63 +1487,92 @@ function App() {
           </div>
 
           {/* Main Canvas */}
-          <div className="flex-grow bg-gray-100 rounded-xl overflow-auto flex items-start justify-center p-8 relative">
-            <div className="relative shadow-2xl bg-white" style={{ width: 'fit-content' }}>
-              {/* The Background PDF Page */}
-              {/* We need a fixed width for the editor canvas to make percentage calc easy? 
-                        No, we use currentWidth for rendering, but percentage is relative to parent.
-                        Since parent width IS currentWidth, Rnd calc is straightforward.
-                    */}
+          <div className="flex-grow bg-gray-100 rounded-xl overflow-auto flex items-start justify-center p-8 relative" onClick={() => setSelectedFieldId(null)}>
+            <div className="relative shadow-2xl bg-white" style={{ width: 'fit-content' }} onClick={(e) => e.stopPropagation()}>
+
               <div className="relative" style={{ width: currentWidth }}>
                 <PdfPageThumbnail pdfJsDoc={pdfJsDoc} pageIndex={currentFormPage} width={currentWidth} isSelected={false} onClick={() => { }} />
 
                 {/* Overlay Fields */}
-                {pageFields.map(field => (
-                  <Rnd
-                    key={field.id}
-                    bounds="parent"
-                    size={{ width: `${field.width}%`, height: `${field.height}%` }}
-                    position={{
-                      x: (field.x / 100) * currentWidth,
-                      y: (field.y / 100) * currentHeight
-                    }}
-                    onDragStop={(e, d) => {
-                      updateField(field.id, { x: (d.x / currentWidth) * 100, y: (d.y / currentHeight) * 100 });
-                    }}
-                    onResizeStop={(e, direction, ref, delta, position) => {
-                      updateField(field.id, {
-                        width: (parseFloat(ref.style.width) / currentWidth) * 100,
-                        height: (parseFloat(ref.style.height) / currentHeight) * 100,
-                        x: (position.x / currentWidth) * 100,
-                        y: (position.y / currentHeight) * 100
-                      });
-                    }}
-                    style={{ zIndex: 10 }}
-                  >
-                    <div className={`w-full h-full border-2 border-canada-red bg-red-50/50 flex items-center justify-center relative group`}>
-                      {field.type === 'text' && <span className="text-xs font-bold text-canada-red opacity-50">Text Field</span>}
-                      {field.type === 'checkbox' && <span className="text-xs font-bold text-canada-red opacity-50">Check</span>}
-
-                      <button
-                        onClick={(e) => { e.stopPropagation(); removeField(field.id); }}
-                        className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                {pageFields.map(field => {
+                  const isSelected = selectedFieldId === field.id;
+                  return (
+                    <Rnd
+                      key={field.id}
+                      bounds="parent"
+                      size={{ width: `${field.width}%`, height: `${field.height}%` }}
+                      position={{
+                        x: (field.x / 100) * currentWidth,
+                        y: (field.y / 100) * currentHeight
+                      }}
+                      onDragStart={() => setSelectedFieldId(field.id)}
+                      onDragStop={(e, d) => {
+                        updateField(field.id, { x: (d.x / currentWidth) * 100, y: (d.y / currentHeight) * 100 });
+                      }}
+                      onResizeStop={(e, direction, ref, delta, position) => {
+                        updateField(field.id, {
+                          width: (parseFloat(ref.style.width) / currentWidth) * 100,
+                          height: (parseFloat(ref.style.height) / currentHeight) * 100,
+                          x: (position.x / currentWidth) * 100,
+                          y: (position.y / currentHeight) * 100
+                        });
+                      }}
+                      style={{ zIndex: isSelected ? 20 : 10 }}
+                    >
+                      <div
+                        onClick={(e) => { e.stopPropagation(); setSelectedFieldId(field.id); }}
+                        className={`w-full h-full border-2 flex items-center justify-center relative group transition-colors 
+                           ${isSelected ? 'border-blue-500 bg-blue-50/40' : 'border-canada-red bg-red-50/20 hover:border-blue-300'}`}
                       >
-                        <X size={12} />
-                      </button>
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-red-500/20 cursor-se-resize"></div>
-                    </div>
-                  </Rnd>
-                ))}
+                        {field.type === 'text' && <div className="text-[10px] font-bold text-canada-red opacity-50 px-1 truncate w-full text-center">{field.name || "Text"}</div>}
+                        {field.type === 'checkbox' && <CheckCircle2 size={12} className="text-canada-red opacity-50" />}
+                        {field.type === 'signature' && <div className="text-[10px] font-bold text-purple-600 opacity-70 flex items-center gap-1"><PenTool size={10} /> Sign</div>}
+
+                        {isSelected && (
+                          <>
+                            <div className="absolute -top-8 right-0 flex gap-1 animate-in fade-in zoom-in duration-200">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); duplicateField(field.id); }}
+                                className="bg-white border border-gray-200 text-gray-600 hover:text-blue-600 rounded shadow-sm p-1.5"
+                                title="Duplicate"
+                              >
+                                <Copy size={12} />
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); removeField(field.id); }}
+                                className="bg-white border border-gray-200 text-gray-600 hover:text-red-600 rounded shadow-sm p-1.5"
+                                title="Remove"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full cursor-se-resize"></div>
+                          </>
+                        )}
+                      </div>
+                    </Rnd>
+                  );
+                })}
               </div>
             </div>
           </div>
+
+          {/* Properties Panel */}
+          {selectedField && (
+            <FormPropertiesPanel
+              field={selectedField}
+              onUpdate={updateFieldProperties}
+              onClose={() => setSelectedFieldId(null)}
+            />
+          )}
+
         </div>
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans text-gray-800 bg-gray-50">
+    <div className="min-h-screen flex flex-col font-sans text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-gray-950 transition-colors duration-200">
       <Header lang={lang} setLang={setLang} onNavigate={handleNavigation} />
 
       <main className="flex-grow flex flex-col">
