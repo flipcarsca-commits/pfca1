@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Download, FileText, X, AlertCircle, CheckCircle2, Shield, Trash2, RotateCw, Image, BookOpen, ArrowLeft, PenTool, RotateCcw, RefreshCcw, ScanLine, ZoomIn, ZoomOut } from 'lucide-react';
+import { Download, FileText, X, AlertCircle, CheckCircle2, Shield, Trash2, RotateCw, Image, BookOpen, ArrowLeft, PenTool, RotateCcw, RefreshCcw, ScanLine, ZoomIn, ZoomOut, Move } from 'lucide-react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
+import { SortablePdfPageThumbnail } from './components/SortablePdfPageThumbnail';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { MapleLeaf } from './components/MapleLeaf';
 import { PricingPage, PrivacyPage, TermsPage, SorryPolicyPage, HowToPage, SupportLocalPage, MakePdfFillablePage } from './components/StaticPages';
 import { PdfPageThumbnail } from './components/PdfPageThumbnail';
-import { loadPdfDocument, getPdfJsDocument, deletePagesFromPdf, rotatePdfPages, convertHeicToPdf, convertPdfToEpub, convertEpubToPdf, formatFileSize, makePdfFillable, initPdfWorker, extractTextWithOcr, makeSearchablePdf } from './utils/pdfUtils';
+import { loadPdfDocument, getPdfJsDocument, deletePagesFromPdf, rotatePdfPages, convertHeicToPdf, convertPdfToEpub, convertEpubToPdf, formatFileSize, makePdfFillable, initPdfWorker, extractTextWithOcr, makeSearchablePdf, reorderPdfPages } from './utils/pdfUtils';
 
 // Initialize PDF.js worker early to ensure thumbnails can render
 initPdfWorker();
@@ -30,7 +33,8 @@ enum ToolType {
   EPUB_TO_PDF = 'EPUB_TO_PDF',
   PDF_TO_EPUB = 'PDF_TO_EPUB',
   MAKE_FILLABLE = 'MAKE_FILLABLE',
-  OCR = 'OCR'
+  OCR = 'OCR',
+  ORGANIZE = 'ORGANIZE'
 }
 
 // Helper to safely update history without crashing in sandboxed environments
@@ -58,8 +62,11 @@ function App() {
   const [ocrText, setOcrText] = useState<string>('');
   const [ocrZoom, setOcrZoom] = useState<number>(1);
 
-  // General Preview Zoom (Delete, Rotate, Fillable)
+  // General Preview Zoom (Delete, Rotate, Fillable, Organize)
   const [previewZoom, setPreviewZoom] = useState<number>(1);
+
+  // Organize State
+  const [items, setItems] = useState<number[]>([]); // Array of page indices in order
 
   // Tool Specific State
   const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set());
@@ -74,6 +81,22 @@ function App() {
   const t = translations[lang];
 
   // Memoize page indices array to avoid recreating on every render
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor)
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      setItems((items) => {
+        const oldIndex = items.indexOf(Number(active.id));
+        const newIndex = items.indexOf(Number(over!.id));
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
   const pageIndices = useMemo(() => Array.from({ length: pageCount }, (_, i) => i), [pageCount]);
 
   // Routing Logic
@@ -124,6 +147,7 @@ function App() {
     if (path === '/pdf-to-epub') return ToolType.PDF_TO_EPUB;
     if (path === '/make-pdf-fillable') return ToolType.MAKE_FILLABLE;
     if (path === '/ocr-pdf') return ToolType.OCR;
+    if (path === '/organize-pdf') return ToolType.ORGANIZE;
     return null;
   };
 
@@ -172,6 +196,7 @@ function App() {
     { id: ToolType.DELETE, icon: Trash2, title: t.toolDelete, desc: t.toolDeleteDesc, accept: '.pdf', path: '/delete-pdf-pages' },
     { id: ToolType.ROTATE, icon: RotateCw, title: t.toolRotate, desc: t.toolRotateDesc, accept: '.pdf', path: '/rotate-pdf' },
     { id: ToolType.MAKE_FILLABLE, icon: PenTool, title: t.toolMakeFillable, desc: t.toolMakeFillableDesc, accept: '.pdf', path: '/make-pdf-fillable' },
+    { id: ToolType.ORGANIZE, icon: Move, title: "Organize PDF", desc: "Reorder pages", accept: '.pdf', path: '/organize-pdf' },
     { id: ToolType.OCR, icon: ScanLine, title: t.toolOcr, desc: t.toolOcrDesc, accept: '.pdf', path: '/ocr-pdf' },
     { id: ToolType.HEIC_TO_PDF, icon: Image, title: t.toolHeic, desc: t.toolHeicDesc, accept: '.heic', path: '/heic-to-pdf' },
     { id: ToolType.EPUB_TO_PDF, icon: BookOpen, title: t.toolEpubToPdf, desc: t.toolEpubToPdfDesc, accept: '.epub', path: '/epub-to-pdf' },
@@ -214,7 +239,7 @@ function App() {
       setErrorKey(null);
       setFile(uploadedFile);
 
-      if (currentTool === ToolType.DELETE || currentTool === ToolType.ROTATE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR) {
+      if (currentTool === ToolType.DELETE || currentTool === ToolType.ROTATE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR || currentTool === ToolType.ORGANIZE) {
         try {
           const { pageCount } = await loadPdfDocument(uploadedFile);
           setPageCount(pageCount);
@@ -229,6 +254,9 @@ function App() {
 
           setSelectedPages(new Set());
           setRotations({});
+          // Initialize items for Organize tool
+          setItems(Array.from({ length: pageCount }, (_, i) => i));
+
           lastSelectedPageRef.current = null;
           setAppState(AppState.SELECTING);
         } catch (e: any) {
@@ -308,6 +336,10 @@ function App() {
           );
           // We stay in EDITING_OCR mode
           return;
+        case ToolType.ORGANIZE:
+          resultBlob = await reorderPdfPages(file, items);
+          outName = file.name.replace(/\.pdf$/i, '_organized.pdf');
+          break;
       }
 
       if (resultBlob) {
@@ -334,7 +366,7 @@ function App() {
       }
       setAppState(AppState.ERROR);
     }
-  }, [file, currentTool, selectedPages, rotations]);
+  }, [file, currentTool, selectedPages, rotations, items]);
 
   const togglePageSelection = useCallback((e: React.MouseEvent, pageIndex: number) => {
     if (currentTool === ToolType.DELETE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR) {
@@ -390,6 +422,7 @@ function App() {
       setPdfJsDoc(null);
       setSelectedPages(new Set());
       setRotations({});
+      setItems([]); // Reset items for organize tool
       lastSelectedPageRef.current = null;
       if (downloadUrl) URL.revokeObjectURL(downloadUrl);
       setDownloadUrl(null);
@@ -532,10 +565,18 @@ function App() {
       case ToolType.PDF_TO_EPUB: return t.features.pdfToEpub;
       case ToolType.MAKE_FILLABLE: return t.features.fillable;
       case ToolType.OCR: return t.features.ocr;
+      case ToolType.ORGANIZE: return {
+        title: "Organize PDF Pages | Reorder PDF | pdfcanada.ca",
+        desc: "Rearrange PDF pages easily. Drag and drop to reorder pages in your PDF document.",
+        h1: "Organize PDF Pages",
+        subtitle: "Get your pages in order, eh?",
+        content: "Need to fix the page order of your PDF? Our Organize PDF tool lets you drag and drop pages to rearrange them exactly how you want.",
+        steps: ["Upload your valid PDF file.", "Drag and drop the page thumbnails to reorder them.", "Click 'Save Organized PDF' to download."],
+        faq: []
+      }; // We'll add proper translations later
       default: return t.features.delete; // Fallback
     }
   };
-
   const renderToolInterface = () => {
     if (!file) {
       const tool = tools.find(t => t.id === currentTool);
@@ -575,13 +616,14 @@ function App() {
       );
     }
 
-    const isVisualTool = currentTool === ToolType.DELETE || currentTool === ToolType.ROTATE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR;
+    const isVisualTool = currentTool === ToolType.DELETE || currentTool === ToolType.ROTATE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR || currentTool === ToolType.ORGANIZE;
 
     let headerText = '';
     if (currentTool === ToolType.DELETE) headerText = t.selectPagesHeader;
     else if (currentTool === ToolType.ROTATE) headerText = ''; // Render custom toolbar instead
     else if (currentTool === ToolType.MAKE_FILLABLE) headerText = t.selectPagesToFill;
     else if (currentTool === ToolType.OCR) headerText = t.selectPagesForOcr;
+    else if (currentTool === ToolType.ORGANIZE) headerText = "Drag pages to reorder";
 
     return (
       <div className="flex flex-col h-[600px]">
@@ -609,20 +651,23 @@ function App() {
           {isVisualTool ? (
             <>
               <div className="w-full mb-4 sticky top-0 bg-gray-50/95 backdrop-blur-sm z-10 py-2">
-                {currentTool === ToolType.ROTATE ? (
-                  // Custom Toolbar for Rotate
+                {currentTool === ToolType.ROTATE || currentTool === ToolType.ORGANIZE ? (
+                  // Custom Toolbar for Rotate OR ORGANIZE
                   <div className="flex flex-wrap items-center justify-center gap-3">
-                    <button onClick={() => rotateAll('left')} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-canada-red/50 hover:text-canada-red transition-all text-sm font-medium text-gray-700">
-                      <RotateCcw size={16} /> {t.rotateAllLeft}
-                    </button>
-                    <button onClick={() => rotateAll('right')} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-canada-red/50 hover:text-canada-red transition-all text-sm font-medium text-gray-700">
-                      <RotateCw size={16} /> {t.rotateAllRight}
-                    </button>
-                    <button onClick={resetRotations} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-gray-400 hover:text-gray-900 transition-all text-sm font-medium text-gray-500">
-                      <RefreshCcw size={16} /> {t.resetRotations}
-                    </button>
-
-                    <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                    {currentTool === ToolType.ROTATE && (
+                      <>
+                        <button onClick={() => rotateAll('left')} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-canada-red/50 hover:text-canada-red transition-all text-sm font-medium text-gray-700">
+                          <RotateCcw size={16} /> {t.rotateAllLeft}
+                        </button>
+                        <button onClick={() => rotateAll('right')} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-canada-red/50 hover:text-canada-red transition-all text-sm font-medium text-gray-700">
+                          <RotateCw size={16} /> {t.rotateAllRight}
+                        </button>
+                        <button onClick={resetRotations} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-gray-400 hover:text-gray-900 transition-all text-sm font-medium text-gray-500">
+                          <RefreshCcw size={16} /> {t.resetRotations}
+                        </button>
+                        <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                      </>
+                    )}
 
                     <button onClick={() => setPreviewZoom(z => Math.max(0.5, z - 0.25))} className="p-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600" title="Zoom Out">
                       <ZoomOut size={16} />
@@ -632,7 +677,7 @@ function App() {
                     </button>
                   </div>
                 ) : (
-                  // Standard Header for Delete/Fillable
+                  // Standard Header for Delete/Fillable/OCR
                   <div className="flex justify-between items-center bg-white p-2 rounded-xl shadow-sm border border-gray-100">
                     <div className="flex items-center gap-3">
                       <p className="text-sm font-medium text-gray-600">
@@ -660,19 +705,37 @@ function App() {
               </div>
 
               <div className="flex flex-wrap justify-center gap-4 w-full">
-                {pageIndices.map((idx) => (
-                  <div key={idx} style={{ width: 'fit-content' }}>
-                    <PdfPageThumbnail
-                      pdfJsDoc={pdfJsDoc}
-                      pageIndex={idx}
-                      isSelected={selectedPages.has(idx)}
-                      rotation={rotations[idx] || 0}
-                      mode={currentTool === ToolType.DELETE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR ? 'delete' : 'rotate'}
-                      onClick={(e) => togglePageSelection(e, idx)}
-                      width={200 * previewZoom}
-                    />
-                  </div>
-                ))}
+                {currentTool === ToolType.ORGANIZE ? (
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <SortableContext items={items} strategy={rectSortingStrategy}>
+                      {items.map((pageIndex) => (
+                        <SortablePdfPageThumbnail
+                          key={pageIndex} // Key must comprise actual page index if we want items to track correctly, but arrayMove expects IDs to be consistent. 
+                          // Actually dnd-kit normally wants stable IDs. 
+                          // 'items' has the current order. The values in 'items' are the original page indices.
+                          id={pageIndex.toString()}
+                          pdfJsDoc={pdfJsDoc}
+                          pageIndex={pageIndex}
+                          width={200 * previewZoom}
+                        />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
+                ) : (
+                  pageIndices.map((idx) => (
+                    <div key={idx} style={{ width: 'fit-content' }}>
+                      <PdfPageThumbnail
+                        pdfJsDoc={pdfJsDoc}
+                        pageIndex={idx}
+                        isSelected={selectedPages.has(idx)}
+                        rotation={rotations[idx] || 0}
+                        mode={currentTool === ToolType.DELETE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR ? 'delete' : 'rotate'}
+                        onClick={(e) => togglePageSelection(e, idx)}
+                        width={200 * previewZoom}
+                      />
+                    </div>
+                  ))
+                )}
               </div>
             </>
           ) : (
@@ -718,6 +781,12 @@ function App() {
               <>
                 <ScanLine size={20} />
                 {selectedPages.size === 0 ? t.selectPagesForOcr : `${t.btnSearchablePdf}`}
+              </>
+            )}
+            {currentTool === ToolType.ORGANIZE && (
+              <>
+                <Move size={20} />
+                Save Organized PDF
               </>
             )}
             {currentTool === ToolType.ROTATE && <><RotateCw size={20} /> {t.btnRotate}</>}

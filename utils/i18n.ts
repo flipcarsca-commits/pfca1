@@ -227,16 +227,27 @@ export const translations = {
         ]
       },
       ocr: {
-        title: "OCR PDF - Extract Text from Scanned PDFs | pdfcanada.ca",
-        desc: "Extract text from scanned PDFs and images using OCR. Free, local, and private.",
-        h1: "OCR - Extract Text from PDFs",
-        subtitle: "Read text from scanned documents, eh.",
-        content: "Got a scanned PDF or image-based document? Our OCR tool uses Tesseract technology to recognize and extract text from your pages. Perfect for digitizing old documents or making scanned PDFs searchable.",
-        steps: [
-          "Upload your scanned PDF document.",
-          "Select which pages you want to run OCR on.",
-          "Click 'Extract Text' to start the recognition process.",
-          "Download the extracted text or get a searchable PDF."
+        title: "OCR PDF | Make PDF Searchable | pdfcanada.ca",
+        desc: "Convert scanned documents and images into searchable, selectable PDF files for free.",
+        h1: "OCR PDF & Make Searchable",
+        subtitle: "Unlock text in your scans, eh?",
+        content: "Turn those flat images and scans into real text you can search and copy. Our OCR tool runs right in your browser—private and secure.",
+        steps: ["Upload your scanned PDF.", "Select the languages in your document.", "Download your new searchable PDF."],
+        faq: [
+          { q: "What is OCR?", a: "OCR stands for Optical Character Recognition. It's the tech that turns pictures of words into actual digital words." },
+          { q: "Is it accurate?", a: "Pretty darn good! But handwriting can be tricky. Typed text works best." }
+        ]
+      },
+      organizePdf: {
+        title: "Organize PDF Pages | Reorder PDF | pdfcanada.ca",
+        desc: "Rearrange PDF pages easily. Drag and drop to reorder pages in your PDF document.",
+        h1: "Organize PDF Pages",
+        subtitle: "Get your pages in order, eh?",
+        content: "Need to fix the page order of your PDF? Our Organize PDF tool lets you drag and drop pages to rearrange them exactly how you want.",
+        steps: ["Upload your valid PDF file.", "Drag and drop the page thumbnails to reorder them.", "Click 'Save Organized PDF' to download."],
+        faq: [
+          { q: "Can I move pages between PDFs?", a: "Not yet! Currently you can only reorder pages within a single file." },
+          { q: "Is my original file changed?", a: "No way! We create a new copy with the new order." }
         ]
       }
     },
@@ -485,16 +496,25 @@ export const translations = {
         ]
       },
       ocr: {
-        title: "OCR PDF - Extraire Texte des Scans | pdfcanada.ca",
-        desc: "Extrayez le texte des PDF numérisés avec OCR. Gratuit, local et privé.",
-        h1: "OCR - Extraire du Texte",
-        subtitle: "Lire le texte des documents numérisés.",
-        content: "Vous avez un PDF numérisé ou un document basé sur des images ? Notre outil OCR utilise la technologie Tesseract pour reconnaître et extraire le texte de vos pages.",
-        steps: [
-          "Téléversez votre document PDF numérisé.",
-          "Sélectionnez les pages sur lesquelles vous voulez exécuter l'OCR.",
-          "Cliquez sur 'Extraire le Texte' pour démarrer le processus de reconnaissance.",
-          "Téléchargez le texte extrait ou obtenez un PDF recherchable."
+        title: "OCR PDF | PDF Cherchable | pdfcanada.ca",
+        desc: "Convertissez des documents numérisés en PDF consultables gratuitement.",
+        h1: "OCR PDF et Recherche",
+        subtitle: "Libérez le texte, hein ?",
+        content: "Transformez vos images et scans en vrai texte que vous pouvez copier. Notre outil OCR fonctionne dans votre navigateur.",
+        steps: ["Téléchargez votre PDF numérisé.", "Sélectionnez la langue.", "Téléchargez votre nouveau PDF consultable."],
+        faq: [
+          { q: "C'est quoi l'OCR ?", a: "La reconnaissance optique de caractères. Ça transforme les images de mots en vrais mots." }
+        ]
+      },
+      organizePdf: {
+        title: "Organiser les pages PDF | Réorganiser PDF | pdfcanada.ca",
+        desc: "Réorganisez facilement les pages PDF. Glissez-déposez pour changer l'ordre.",
+        h1: "Organiser les pages PDF",
+        subtitle: "Mettez de l'ordre, hein ?",
+        content: "Besoin de changer l'ordre des pages ? Notre outil vous permet de glisser-déposer les pages pour les réorganiser exactement comme vous le souhaitez.",
+        steps: ["Téléchargez votre fichier PDF.", "Glissez-déposez les vignettes pour les réorganiser.", "Cliquez sur 'Enregistrer' pour télécharger."],
+        faq: [
+          { q: "Puis-je déplacer des pages entre PDF ?", a: "Pas encore ! Pour l'instant, uniquement au sein d'un même fichier." }
         ]
       }
     },

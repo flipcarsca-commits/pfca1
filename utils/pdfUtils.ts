@@ -44,6 +44,23 @@ export const loadPdfDocument = async (file: File): Promise<{ doc: PDFDocument; p
   return { doc, pageCount: doc.getPageCount() };
 };
 
+export const reorderPdfPages = async (originalFile: File, newOrder: number[]): Promise<Uint8Array> => {
+  const arrayBuffer = await originalFile.arrayBuffer();
+  const doc = await PDFDocument.load(arrayBuffer);
+
+  // Create a new document
+  const newDoc = await PDFDocument.create();
+
+  // Copy pages in the new order
+  const copiedPages = await newDoc.copyPages(doc, newOrder);
+
+  copiedPages.forEach((page) => {
+    newDoc.addPage(page);
+  });
+
+  return await newDoc.save();
+};
+
 export const deletePagesFromPdf = async (originalFile: File, pageIndicesToDelete: number[]): Promise<Uint8Array> => {
   const arrayBuffer = await originalFile.arrayBuffer();
   const doc = await PDFDocument.load(arrayBuffer);
