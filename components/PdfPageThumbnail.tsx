@@ -8,6 +8,7 @@ interface PdfPageThumbnailProps {
   rotation?: number; // degrees
   onClick: (event: React.MouseEvent) => void;
   mode?: 'delete' | 'rotate';
+  width?: number;
 }
 
 const PdfPageThumbnailComponent: React.FC<PdfPageThumbnailProps> = ({
@@ -16,7 +17,8 @@ const PdfPageThumbnailComponent: React.FC<PdfPageThumbnailProps> = ({
   isSelected,
   rotation = 0,
   onClick,
-  mode = 'delete'
+  mode = 'delete',
+  width = 300
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -86,7 +88,7 @@ const PdfPageThumbnailComponent: React.FC<PdfPageThumbnailProps> = ({
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
 
-        const desiredWidth = 300;
+        const desiredWidth = width;
         const viewport = page.getViewport({ scale: 1 });
         const scale = desiredWidth / viewport.width;
         const scaledViewport = page.getViewport({ scale });

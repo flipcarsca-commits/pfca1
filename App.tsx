@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Download, FileText, X, AlertCircle, CheckCircle2, Shield, Trash2, RotateCw, Image, BookOpen, ArrowLeft, PenTool, RotateCcw, RefreshCcw, ScanLine } from 'lucide-react';
+import { Download, FileText, X, AlertCircle, CheckCircle2, Shield, Trash2, RotateCw, Image, BookOpen, ArrowLeft, PenTool, RotateCcw, RefreshCcw, ScanLine, ZoomIn, ZoomOut } from 'lucide-react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { MapleLeaf } from './components/MapleLeaf';
@@ -56,6 +56,7 @@ function App() {
 
   // OCR specific state
   const [ocrText, setOcrText] = useState<string>('');
+  const [ocrZoom, setOcrZoom] = useState<number>(1);
 
   // Tool Specific State
   const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set());
@@ -983,15 +984,34 @@ function App() {
         {/* Left Column: Visuals */}
         <div className="w-full md:w-1/3 bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
           <div className="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
-            <h3 className="font-bold text-gray-700">Source PDF</h3>
-            <span className="text-xs bg-red-100 text-canada-red px-2 py-1 rounded-full font-bold">LIVE</span>
+            <div className="flex items-center gap-2">
+              <h3 className="font-bold text-gray-700">Source PDF</h3>
+              <span className="text-xs bg-red-100 text-canada-red px-2 py-1 rounded-full font-bold">LIVE</span>
+            </div>
+            <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1">
+              <button
+                onClick={() => setOcrZoom(z => Math.max(0.5, z - 0.25))}
+                className="p-1 text-gray-500 hover:text-canada-red hover:bg-red-50 rounded transition-colors"
+                title="Zoom Out"
+              >
+                <ZoomOut size={16} />
+              </button>
+              <span className="text-xs font-mono w-8 text-center">{Math.round(ocrZoom * 100)}%</span>
+              <button
+                onClick={() => setOcrZoom(z => Math.min(3, z + 0.25))}
+                className="p-1 text-gray-500 hover:text-canada-red hover:bg-red-50 rounded transition-colors"
+                title="Zoom In"
+              >
+                <ZoomIn size={16} />
+              </button>
+            </div>
           </div>
           <div className="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50">
             {Array.from(selectedPages).length === 0 ? (
               <p className="text-center text-gray-500 italic mt-10">Select pages first, eh?</p>
             ) : (
               Array.from(selectedPages).sort((a, b) => a - b).map(idx => (
-                <div key={idx} className="bg-white p-2 rounded-xl shadow-sm border border-gray-200">
+                <div key={idx} className="bg-white p-2 rounded-xl shadow-sm border border-gray-200" style={{ width: 'fit-content', margin: '0 auto' }}>
                   <div className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">Page {idx + 1}</div>
                   <div className="rounded-lg overflow-hidden border border-gray-100">
                     <PdfPageThumbnail
@@ -1000,6 +1020,7 @@ function App() {
                       isSelected={false}
                       onClick={() => { }}
                       mode="rotate"
+                      width={300 * ocrZoom}
                     />
                   </div>
                 </div>
