@@ -701,7 +701,7 @@ function App() {
       const tool = tools.find(t => t.id === currentTool);
       return (
         <div
-          className="flex-grow flex flex-col items-center justify-center p-10 text-center cursor-pointer hover:bg-gray-50 transition-colors group border-2 border-dashed border-transparent hover:border-canada-red/20 m-4 rounded-3xl"
+          className="flex-grow flex flex-col items-center justify-center p-10 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group border-2 border-dashed border-transparent hover:border-canada-red/20 m-4 rounded-3xl"
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
@@ -711,13 +711,13 @@ function App() {
           }}
           onClick={() => fileInputRef.current?.click()}
         >
-          <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+          <div className="w-20 h-20 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
             {tool && <tool.icon size={32} />}
           </div>
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">{tool?.title}</h3>
-          <p className="text-gray-500 mb-2">{t.uploadDesc} ({tool?.accept})</p>
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">{tool?.title}</h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-2">{t.uploadDesc} ({tool?.accept})</p>
 
-          <div className="inline-flex items-center gap-1.5 bg-gray-100 px-3 py-1 rounded-full text-xs font-medium text-gray-500 mb-8">
+          <div className="inline-flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-xs font-medium text-gray-500 dark:text-gray-400 mb-8">
             <Shield size={12} /> {t.processedLocally}
           </div>
 
@@ -747,59 +747,59 @@ function App() {
     return (
       <div className="flex flex-col h-[600px]">
         {/* Header */}
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-white z-10 shadow-sm">
+        <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-white dark:bg-gray-900 z-10 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-red-100 text-canada-red rounded-lg flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 text-canada-red rounded-lg flex items-center justify-center shrink-0">
               <FileText size={20} />
             </div>
             <div className="min-w-0">
-              <h3 className="font-bold text-gray-800 truncate max-w-[200px]">{file.name}</h3>
-              <p className="text-xs text-gray-500 flex items-center gap-2">
+              <h3 className="font-bold text-gray-800 dark:text-gray-100 truncate max-w-[200px]">{file.name}</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
                 <span>{file ? formatFileSize(file.size) : ''}</span>
               </p>
             </div>
           </div>
-          <button onClick={handleSoftReset} className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <button onClick={handleSoftReset} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
             <X size={20} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-grow overflow-y-auto p-6 bg-gray-50 custom-scrollbar flex flex-col items-center">
+        <div className="flex-grow overflow-y-auto p-6 bg-gray-50 dark:bg-gray-900 custom-scrollbar flex flex-col items-center">
 
           {isVisualTool ? (
             <>
-              <div className="w-full mb-4 sticky top-0 bg-gray-50/95 backdrop-blur-sm z-10 py-2">
+              <div className="w-full mb-4 sticky top-0 bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur-sm z-10 py-2">
                 {currentTool === ToolType.ROTATE || currentTool === ToolType.ORGANIZE ? (
                   // Custom Toolbar for Rotate OR ORGANIZE
                   <div className="flex flex-wrap items-center justify-center gap-3">
                     {currentTool === ToolType.ROTATE && (
                       <>
-                        <button onClick={() => rotateAll('left')} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-canada-red/50 hover:text-canada-red transition-all text-sm font-medium text-gray-700">
+                        <button onClick={() => rotateAll('left')} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:border-canada-red/50 hover:text-canada-red transition-all text-sm font-medium text-gray-700 dark:text-gray-300">
                           <RotateCcw size={16} /> {t.rotateAllLeft}
                         </button>
-                        <button onClick={() => rotateAll('right')} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-canada-red/50 hover:text-canada-red transition-all text-sm font-medium text-gray-700">
+                        <button onClick={() => rotateAll('right')} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:border-canada-red/50 hover:text-canada-red transition-all text-sm font-medium text-gray-700 dark:text-gray-300">
                           <RotateCw size={16} /> {t.rotateAllRight}
                         </button>
-                        <button onClick={resetRotations} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-gray-400 hover:text-gray-900 transition-all text-sm font-medium text-gray-500">
+                        <button onClick={resetRotations} className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-all text-sm font-medium text-gray-500 dark:text-gray-400">
                           <RefreshCcw size={16} /> {t.resetRotations}
                         </button>
-                        <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
                       </>
                     )}
 
-                    <button onClick={() => setPreviewZoom(z => Math.max(0.5, z - 0.25))} className="p-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600" title="Zoom Out">
+                    <button onClick={() => setPreviewZoom(z => Math.max(0.5, z - 0.25))} className="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400" title="Zoom Out">
                       <ZoomOut size={16} />
                     </button>
-                    <button onClick={() => setPreviewZoom(z => Math.min(3, z + 0.25))} className="p-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600" title="Zoom In">
+                    <button onClick={() => setPreviewZoom(z => Math.min(3, z + 0.25))} className="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400" title="Zoom In">
                       <ZoomIn size={16} />
                     </button>
                   </div>
                 ) : (
                   // Standard Header for Delete/Fillable/OCR
-                  <div className="flex justify-between items-center bg-white p-2 rounded-xl shadow-sm border border-gray-100">
+                  <div className="flex justify-between items-center bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                      <p className="text-sm font-medium text-gray-600">
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                         {headerText}
                       </p>
                       {(currentTool === ToolType.DELETE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR) && (
@@ -810,12 +810,12 @@ function App() {
                     </div>
 
                     {/* Zoom Controls Shared */}
-                    <div className="flex items-center gap-1 bg-gray-50 rounded-lg border border-gray-200 p-1">
-                      <button onClick={() => setPreviewZoom(z => Math.max(0.5, z - 0.25))} className="p-1 hover:bg-white rounded transition-colors text-gray-500">
+                    <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 p-1">
+                      <button onClick={() => setPreviewZoom(z => Math.max(0.5, z - 0.25))} className="p-1 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors text-gray-500 dark:text-gray-400">
                         <ZoomOut size={14} />
                       </button>
                       <span className="text-xs font-mono w-8 text-center text-gray-400">{Math.round(previewZoom * 100)}%</span>
-                      <button onClick={() => setPreviewZoom(z => Math.min(3, z + 0.25))} className="p-1 hover:bg-white rounded transition-colors text-gray-500">
+                      <button onClick={() => setPreviewZoom(z => Math.min(3, z + 0.25))} className="p-1 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors text-gray-500 dark:text-gray-400">
                         <ZoomIn size={14} />
                       </button>
                     </div>
@@ -859,13 +859,13 @@ function App() {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center max-w-sm">
-              <div className="w-16 h-16 bg-red-100 text-canada-red rounded-2xl flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-canada-red rounded-2xl flex items-center justify-center mb-4">
                 {currentTool === ToolType.HEIC_TO_PDF && <Image size={32} />}
                 {currentTool === ToolType.EPUB_TO_PDF && <BookOpen size={32} />}
                 {currentTool === ToolType.PDF_TO_EPUB && <FileText size={32} />}
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.btnConvert}</h3>
-              <p className="text-gray-500 mb-6">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t.btnConvert}</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-6">
                 Ready to convert <strong>{file.name}</strong>. This might take a few moments depending on the file size, eh.
               </p>
             </div>
@@ -873,14 +873,14 @@ function App() {
         </div>
 
         {/* Footer Action */}
-        <div className="p-4 border-t border-gray-100 bg-white">
+        <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
           <button
             onClick={handleAction}
             disabled={(currentTool === ToolType.DELETE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR) && selectedPages.size === 0}
             className={`
               w-full py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2
               ${((currentTool === ToolType.DELETE || currentTool === ToolType.MAKE_FILLABLE || currentTool === ToolType.OCR) && selectedPages.size === 0)
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
                 : 'bg-canada-red hover:bg-canada-darkRed text-white shadow-red-500/30 hover:-translate-y-0.5'}
             `}
           >
@@ -921,18 +921,18 @@ function App() {
   const renderHome = () => (
     <div className="w-full max-w-4xl mx-auto px-6 py-12 text-center">
       {hasSavedSession && (
-        <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-4">
+        <div className="mb-8 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-xl flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
+            <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg text-blue-600 dark:text-blue-400">
               <History size={24} />
             </div>
             <div className="text-left">
-              <h3 className="font-bold text-gray-800">Unsaved work found</h3>
-              <p className="text-sm text-gray-600">You have a previous session available.</p>
+              <h3 className="font-bold text-gray-800 dark:text-gray-100">Unsaved work found</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">You have a previous session available.</p>
             </div>
           </div>
           <div className="flex gap-2">
-            <button onClick={clearAutosave} className="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium text-sm">Dismiss</button>
+            <button onClick={clearAutosave} className="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-medium text-sm">Dismiss</button>
             <button onClick={handleResume} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-md transition-colors">
               Resume Work
             </button>
@@ -944,25 +944,25 @@ function App() {
         src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Beaming%20Face%20with%20Smiling%20Eyes.png"
         alt="Friendly Face"
         className="w-24 h-24 mx-auto mb-6 hover:scale-110 transition-transform duration-300"
-      />  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 border border-red-200 text-canada-red text-xs font-bold uppercase tracking-wider shadow-sm">
+      />  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-canada-red text-xs font-bold uppercase tracking-wider shadow-sm">
         <MapleLeaf className="w-4 h-4" />
         {t.builtIn}
       </div>
 
-      <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-sm">
+      <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-gray-900 dark:text-gray-100 drop-shadow-sm">
         {t.title} <span className="text-canada-red">{t.subtitle}</span>
       </h1>
 
-      <p className="text-xl text-gray-600 max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
+      <p className="text-xl text-gray-600 dark:text-gray-400 max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
         {t.description}
       </p>
 
       <div className="flex flex-col gap-4 max-w-md mx-auto md:mx-0">
-        <div className="bg-white/80 backdrop-blur border border-gray-200 rounded-lg p-4 flex items-start gap-3 text-left shadow-sm">
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex items-start gap-3 text-left shadow-sm">
           <Shield className="w-5 h-5 text-canada-red mt-1 flex-shrink-0" />
           <div>
-            <h4 className="font-bold text-gray-900 text-sm">{t.localProcessing}</h4>
-            <p className="text-gray-600 text-xs mt-1">
+            <h4 className="font-bold text-gray-900 dark:text-gray-100 text-sm">{t.localProcessing}</h4>
+            <p className="text-gray-600 dark:text-gray-400 text-xs mt-1">
               {t.localProcessingDesc}
             </p>
           </div>
@@ -972,12 +972,12 @@ function App() {
 
       {/* Right Side: Dashboard / Tool */}
       <div className="w-full md:w-1/2 max-w-xl">
-        <div className="bg-white rounded-[2rem] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[500px] flex flex-col transition-all duration-300">
+        <div className="bg-white dark:bg-gray-900 rounded-[2rem] shadow-2xl shadow-gray-200/50 dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-800 overflow-hidden relative min-h-[500px] flex flex-col transition-all duration-300">
 
           {/* --- DASHBOARD: SELECT TOOL --- */}
           {appState === AppState.HOME && (
-            <div className="p-8 h-full bg-gray-50/30 overflow-y-auto custom-scrollbar">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <div className="p-8 h-full bg-gray-50/30 dark:bg-gray-800/30 overflow-y-auto custom-scrollbar">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
                 Select a Tool <span className="text-lg font-normal text-gray-400">eh?</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -985,13 +985,13 @@ function App() {
                   <button
                     key={tool.id}
                     onClick={() => selectTool(tool.id)}
-                    className="flex flex-col items-start p-5 bg-white border border-gray-200 rounded-2xl hover:border-canada-red hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-1 transition-all text-left group"
+                    className="flex flex-col items-start p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-canada-red hover:shadow-lg hover:shadow-red-500/10 hover:-translate-y-1 transition-all text-left group"
                   >
-                    <div className="p-3 bg-red-50 text-canada-red rounded-xl mb-3 group-hover:bg-canada-red group-hover:text-white transition-colors">
+                    <div className="p-3 bg-red-50 dark:bg-red-900/30 text-canada-red rounded-xl mb-3 group-hover:bg-canada-red group-hover:text-white transition-colors">
                       <tool.icon size={24} />
                     </div>
-                    <h3 className="font-bold text-gray-800">{tool.title}</h3>
-                    <p className="text-xs text-gray-500 mt-1">{tool.desc}</p>
+                    <h3 className="font-bold text-gray-800 dark:text-gray-100">{tool.title}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{tool.desc}</p>
                   </button>
                 ))}
               </div>
@@ -1003,7 +1003,7 @@ function App() {
             <>
               <div className="absolute top-4 left-4 z-20">
                 {!file && (
-                  <button onClick={handleReset} className="flex items-center gap-1 text-gray-500 hover:text-gray-800 text-sm font-medium bg-white/80 backdrop-blur px-3 py-1.5 rounded-full shadow-sm hover:shadow border border-transparent hover:border-gray-200 transition-all">
+                  <button onClick={handleReset} className="flex items-center gap-1 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 text-sm font-medium bg-white/80 dark:bg-gray-800/80 backdrop-blur px-3 py-1.5 rounded-full shadow-sm hover:shadow border border-transparent hover:border-gray-200 dark:hover:border-gray-600 transition-all">
                     <ArrowLeft size={16} /> {t.backToHome}
                   </button>
                 )}
@@ -1014,28 +1014,28 @@ function App() {
 
           {/* --- PROCESSING --- */}
           {appState === AppState.PROCESSING && (
-            <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-8">
+            <div className="absolute inset-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-8">
               <div className="animate-spin text-canada-red mb-4">
                 <MapleLeaf className="w-12 h-12" />
               </div>
-              <h3 className="text-xl font-bold text-gray-800">{t.working}</h3>
-              <p className="text-gray-500 mt-2">{t.workingDesc}</p>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t.working}</h3>
+              <p className="text-gray-500 dark:text-gray-400 mt-2">{t.workingDesc}</p>
             </div>
           )}
 
           {/* --- DONE --- */}
           {appState === AppState.DONE && downloadUrl && (
-            <div className="flex flex-col h-full items-center justify-center p-10 text-center bg-gradient-to-br from-red-50/50 to-white">
-              <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 animate-bounce">
+            <div className="flex flex-col h-full items-center justify-center p-10 text-center bg-gradient-to-br from-red-50/50 dark:from-red-900/20 to-white dark:to-gray-900">
+              <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mb-6 animate-bounce">
                 <CheckCircle2 size={40} />
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">{t.doneTitle}</h3>
-              <p className="text-gray-500 mb-8 max-w-xs">{t.doneDesc}</p>
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t.doneTitle}</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-xs">{t.doneDesc}</p>
               <div className="space-y-3 w-full max-w-xs">
                 <a href={downloadUrl} download={downloadName} className="flex items-center justify-center gap-2 w-full bg-canada-red hover:bg-canada-darkRed text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-red-500/30 transition-all hover:-translate-y-0.5">
                   <Download size={20} /> {t.download}
                 </a>
-                <button onClick={handleReset} className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-6 py-3 rounded-full font-medium transition-colors">
+                <button onClick={handleReset} className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-full font-medium transition-colors">
                   {t.doAnother}
                 </button>
               </div>
@@ -1045,17 +1045,17 @@ function App() {
           {/* --- ERROR --- */}
           {appState === AppState.ERROR && (
             <div className="flex flex-col h-full items-center justify-center p-10 text-center relative">
-              <button onClick={handleReset} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+              <button onClick={handleReset} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                 <X size={24} />
               </button>
-              <div className="w-16 h-16 bg-red-100 text-canada-red rounded-full flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-canada-red rounded-full flex items-center justify-center mb-6">
                 <AlertCircle size={32} />
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{t.errorTitle}</h3>
-              <p className="text-gray-500 mb-8">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t.errorTitle}</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-8">
                 {(errorKey && typeof t[errorKey] === 'string') ? (t[errorKey] as string) : t.genericError}
               </p>
-              <button onClick={handleReset} className="bg-gray-800 hover:bg-black text-white px-8 py-3 rounded-full font-bold transition-all">
+              <button onClick={handleReset} className="bg-gray-800 hover:bg-black dark:bg-gray-700 dark:hover:bg-gray-600 text-white px-8 py-3 rounded-full font-bold transition-all">
                 {t.backToHome}
               </button>
             </div>
@@ -1066,8 +1066,8 @@ function App() {
 
       {/* Trust / Privacy Section (Below Hero) */}
       <div className="max-w-3xl mx-auto text-center space-y-4">
-        <h2 className="text-3xl font-bold text-gray-900">{t.builtIn}</h2>
-        <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">{t.privacyText1}</p>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t.builtIn}</h2>
+        <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed max-w-2xl mx-auto">{t.privacyText1}</p>
       </div>
 
     </div >
@@ -1093,13 +1093,13 @@ function App() {
         <div className="w-full md:w-1/2 space-y-8 text-center md:text-left">
           <button
             onClick={() => handleNavigation('HOME')}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-500 text-xs font-bold uppercase tracking-wider shadow-sm hover:text-canada-red hover:border-canada-red transition-all"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider shadow-sm hover:text-canada-red hover:border-canada-red transition-all"
           >
             <ArrowLeft size={12} />
             {t.backToHome}
           </button>
 
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight text-gray-900">
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight text-gray-900 dark:text-gray-100">
             {content.h1}
           </h1>
 
@@ -1107,18 +1107,18 @@ function App() {
             {content.subtitle}
           </p>
 
-          <div className="prose prose-lg text-gray-600 mx-auto md:mx-0">
+          <div className="prose prose-lg text-gray-600 dark:text-gray-400 mx-auto md:mx-0">
             {content.content.split('\n\n').map((paragraph, index) => (
               <p key={index} className="mb-4">{paragraph}</p>
             ))}
 
             {(content as any).steps && (
               <div className="mt-8">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">{t.navHowTo}</h3>
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">{t.navHowTo}</h3>
                 <div className="space-y-4">
                   {(content as any).steps.map((step: string, i: number) => (
                     <div key={i} className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-red-100 text-canada-red flex items-center justify-center font-bold shrink-0">{i + 1}</div>
+                      <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 text-canada-red flex items-center justify-center font-bold shrink-0">{i + 1}</div>
                       <p className="pt-1">{step}</p>
                     </div>
                   ))}
@@ -1128,12 +1128,12 @@ function App() {
 
             {(content as any).faq && (
               <div className="mt-12">
-                <h3 className="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h3>
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Frequently Asked Questions</h3>
                 <div className="space-y-6">
                   {(content as any).faq.map((item: { question: string, answer: string }, i: number) => (
-                    <div key={i} className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-                      <h4 className="font-bold text-gray-900 text-lg mb-2">{item.question}</h4>
-                      <p className="text-gray-600">{item.answer}</p>
+                    <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700">
+                      <h4 className="font-bold text-gray-900 dark:text-gray-100 text-lg mb-2">{item.question}</h4>
+                      <p className="text-gray-600 dark:text-gray-400">{item.answer}</p>
                     </div>
                   ))}
                 </div>
@@ -1143,34 +1143,34 @@ function App() {
         </div>
 
         <div className="w-full md:w-1/2 max-w-xl">
-          <div className="bg-white rounded-[2rem] shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden relative min-h-[500px] flex flex-col transition-all duration-300">
+          <div className="bg-white dark:bg-gray-900 rounded-[2rem] shadow-2xl shadow-gray-200/50 dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-800 overflow-hidden relative min-h-[500px] flex flex-col transition-all duration-300">
 
             {(appState === AppState.SELECTING || appState === AppState.PROCESSING) && (
               renderToolInterface()
             )}
 
             {appState === AppState.PROCESSING && (
-              <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-8">
+              <div className="absolute inset-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-8">
                 <div className="animate-spin text-canada-red mb-4">
                   <MapleLeaf className="w-12 h-12" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-800">{t.working}</h3>
-                <p className="text-gray-500 mt-2">{t.workingDesc}</p>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t.working}</h3>
+                <p className="text-gray-500 dark:text-gray-400 mt-2">{t.workingDesc}</p>
               </div>
             )}
 
             {appState === AppState.DONE && downloadUrl && (
-              <div className="flex flex-col h-full items-center justify-center p-10 text-center bg-gradient-to-br from-red-50/50 to-white">
-                <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 animate-bounce">
+              <div className="flex flex-col h-full items-center justify-center p-10 text-center bg-gradient-to-br from-red-50/50 dark:from-red-900/20 to-white dark:to-gray-900">
+                <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mb-6 animate-bounce">
                   <CheckCircle2 size={40} />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">{t.doneTitle}</h3>
-                <p className="text-gray-500 mb-8 max-w-xs">{t.doneDesc}</p>
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t.doneTitle}</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-xs">{t.doneDesc}</p>
                 <div className="space-y-3 w-full max-w-xs">
                   <a href={downloadUrl} download={downloadName} className="flex items-center justify-center gap-2 w-full bg-canada-red hover:bg-canada-darkRed text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-red-500/30 transition-all hover:-translate-y-0.5">
                     <Download size={20} /> {t.download}
                   </a>
-                  <button onClick={handleReset} className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-6 py-3 rounded-full font-medium transition-colors">
+                  <button onClick={handleReset} className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-full font-medium transition-colors">
                     {t.doAnother}
                   </button>
                 </div>
@@ -1179,17 +1179,17 @@ function App() {
 
             {appState === AppState.ERROR && (
               <div className="flex flex-col h-full items-center justify-center p-10 text-center relative">
-                <button onClick={handleReset} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <button onClick={handleReset} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                   <X size={24} />
                 </button>
-                <div className="w-16 h-16 bg-red-100 text-canada-red rounded-full flex items-center justify-center mb-6">
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-canada-red rounded-full flex items-center justify-center mb-6">
                   <AlertCircle size={32} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">{t.errorTitle}</h3>
-                <p className="text-gray-500 mb-8">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t.errorTitle}</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-8">
                   {(errorKey && typeof t[errorKey] === 'string') ? (t[errorKey] as string) : t.genericError}
                 </p>
-                <button onClick={handleReset} className="bg-gray-800 hover:bg-black text-white px-8 py-3 rounded-full font-bold transition-all">
+                <button onClick={handleReset} className="bg-gray-800 hover:bg-black dark:bg-gray-700 dark:hover:bg-gray-600 text-white px-8 py-3 rounded-full font-bold transition-all">
                   {t.backToHome}
                 </button>
               </div>
@@ -1218,38 +1218,38 @@ function App() {
     return (
       <div className="w-full max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row gap-8 h-[85vh]">
         {/* Left Column: Visuals */}
-        <div className="w-full md:w-1/3 bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
-          <div className="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+        <div className="w-full md:w-1/3 bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col">
+          <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-gray-700">Source PDF</h3>
-              <span className="text-xs bg-red-100 text-canada-red px-2 py-1 rounded-full font-bold">LIVE</span>
+              <h3 className="font-bold text-gray-700 dark:text-gray-200">Source PDF</h3>
+              <span className="text-xs bg-red-100 dark:bg-red-900/30 text-canada-red px-2 py-1 rounded-full font-bold">LIVE</span>
             </div>
-            <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-1">
+            <div className="flex items-center gap-1 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 p-1">
               <button
                 onClick={() => setOcrZoom(z => Math.max(0.5, z - 0.25))}
-                className="p-1 text-gray-500 hover:text-canada-red hover:bg-red-50 rounded transition-colors"
+                className="p-1 text-gray-500 dark:text-gray-400 hover:text-canada-red hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
                 title="Zoom Out"
               >
                 <ZoomOut size={16} />
               </button>
-              <span className="text-xs font-mono w-8 text-center">{Math.round(ocrZoom * 100)}%</span>
+              <span className="text-xs font-mono w-8 text-center text-gray-600 dark:text-gray-400">{Math.round(ocrZoom * 100)}%</span>
               <button
                 onClick={() => setOcrZoom(z => Math.min(3, z + 0.25))}
-                className="p-1 text-gray-500 hover:text-canada-red hover:bg-red-50 rounded transition-colors"
+                className="p-1 text-gray-500 dark:text-gray-400 hover:text-canada-red hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
                 title="Zoom In"
               >
                 <ZoomIn size={16} />
               </button>
             </div>
           </div>
-          <div className="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50">
+          <div className="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50 dark:bg-gray-800/50">
             {Array.from(selectedPages).length === 0 ? (
-              <p className="text-center text-gray-500 italic mt-10">Select pages first, eh?</p>
+              <p className="text-center text-gray-500 dark:text-gray-400 italic mt-10">Select pages first, eh?</p>
             ) : (
               Array.from(selectedPages).sort((a, b) => a - b).map(idx => (
-                <div key={idx} className="bg-white p-2 rounded-xl shadow-sm border border-gray-200" style={{ width: 'fit-content', margin: '0 auto' }}>
+                <div key={idx} className="bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700" style={{ width: 'fit-content', margin: '0 auto' }}>
                   <div className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">Page {idx + 1}</div>
-                  <div className="rounded-lg overflow-hidden border border-gray-100">
+                  <div className="rounded-lg overflow-hidden border border-gray-100 dark:border-gray-700">
                     <PdfPageThumbnail
                       pdfJsDoc={pdfJsDoc}
                       pageIndex={idx}
@@ -1266,16 +1266,16 @@ function App() {
         </div>
 
         {/* Right Column: Editor */}
-        <div className="w-full md:w-2/3 bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
-          <div className="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+        <div className="w-full md:w-2/3 bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col">
+          <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <FileText size={20} className="text-gray-500" />
-              <h3 className="font-bold text-gray-700">Extracted Text</h3>
+              <FileText size={20} className="text-gray-500 dark:text-gray-400" />
+              <h3 className="font-bold text-gray-700 dark:text-gray-200">Extracted Text</h3>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={handleReset}
-                className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
                 Cancel
               </button>
@@ -1290,7 +1290,7 @@ function App() {
 
           <div className="flex-grow relative">
             <textarea
-              className="w-full h-full p-6 resize-none focus:outline-none focus:ring-2 focus:ring-inset focus:ring-canada-red/10 font-mono text-sm leading-relaxed text-gray-700"
+              className="w-full h-full p-6 resize-none focus:outline-none focus:ring-2 focus:ring-inset focus:ring-canada-red/10 font-mono text-sm leading-relaxed text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900"
               value={ocrText}
               onChange={(e) => setOcrText(e.target.value)}
               placeholder="Text will appear here as we process your PDF..."
@@ -1424,45 +1424,45 @@ function App() {
     return (
       <div className="w-full max-w-7xl mx-auto px-6 py-12 flex flex-col h-[85vh]">
         {/* Toolbar */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6 flex justify-between items-center z-20 relative">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4 mb-6 flex justify-between items-center z-20 relative">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-gray-700">{t.fbTitle}</h2>
-            <div className="h-6 w-px bg-gray-200"></div>
+            <h2 className="text-xl font-bold text-gray-700 dark:text-gray-200">{t.fbTitle}</h2>
+            <div className="h-6 w-px bg-gray-200 dark:bg-gray-700"></div>
 
-            <button onClick={() => addField('text')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors text-sm">
+            <button onClick={() => addField('text')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors text-sm">
               <FileText size={16} /> {t.fbAddText}
             </button>
-            <button onClick={() => addField('checkbox')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors text-sm">
+            <button onClick={() => addField('checkbox')} className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors text-sm">
               <CheckCircle2 size={16} /> {t.fbAddCheckbox}
             </button>
-            <button onClick={() => addField('signature')} className="flex items-center gap-2 px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg font-medium transition-colors text-sm">
+            <button onClick={() => addField('signature')} className="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-400 rounded-lg font-medium transition-colors text-sm">
               <PenTool size={16} /> Sign
             </button>
 
-            <div className="h-6 w-px bg-gray-200 mx-2"></div>
+            <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
 
-            <button onClick={undo} disabled={historyIndex <= 0} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed" title="Undo">
+            <button onClick={undo} disabled={historyIndex <= 0} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed" title="Undo">
               <Undo2 size={18} />
             </button>
-            <button onClick={redo} disabled={historyIndex >= history.length - 1} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed" title="Redo">
+            <button onClick={redo} disabled={historyIndex >= history.length - 1} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed" title="Redo">
               <Redo2 size={18} />
             </button>
 
-            <div className="h-6 w-px bg-gray-200 mx-2"></div>
+            <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
 
             <div className="flex items-center gap-2">
-              <button onClick={() => setFormZoom(z => Math.max(0.5, z - 0.25))} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600" title="Zoom Out">
+              <button onClick={() => setFormZoom(z => Math.max(0.5, z - 0.25))} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400" title="Zoom Out">
                 <ZoomOut size={18} />
               </button>
-              <span className="text-sm font-medium text-gray-500 w-12 text-center">{Math.round(formZoom * 100)}%</span>
-              <button onClick={() => setFormZoom(z => Math.min(2.0, z + 0.25))} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600" title="Zoom In">
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-12 text-center">{Math.round(formZoom * 100)}%</span>
+              <button onClick={() => setFormZoom(z => Math.min(2.0, z + 0.25))} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400" title="Zoom In">
                 <ZoomIn size={18} />
               </button>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={handleReset} className="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium">{t.fbCancel}</button>
+            <button onClick={handleReset} className="px-4 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-medium">{t.fbCancel}</button>
             <button onClick={downloadForm} className="px-6 py-2 bg-canada-red hover:bg-canada-darkRed text-white rounded-lg font-bold shadow-lg shadow-red-500/20 transition-all hover:-translate-y-0.5">
               {t.fbDownload}
             </button>
@@ -1471,24 +1471,24 @@ function App() {
 
         <div className="flex-grow flex gap-6 overflow-hidden">
           {/* Left Sidebar: Thumbnails */}
-          <div className="w-48 flex-shrink-0 bg-white rounded-xl border border-gray-200 overflow-y-auto custom-scrollbar p-2 space-y-2">
+          <div className="w-48 flex-shrink-0 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-y-auto custom-scrollbar p-2 space-y-2">
             {Array.from({ length: pageCount }).map((_, idx) => (
               <div
                 key={idx}
                 onClick={() => setCurrentFormPage(idx)}
-                className={`p-2 rounded-lg cursor-pointer border-2 transition-all ${currentFormPage === idx ? 'border-canada-red bg-red-50' : 'border-transparent hover:border-gray-200'}`}
+                className={`p-2 rounded-lg cursor-pointer border-2 transition-all ${currentFormPage === idx ? 'border-canada-red bg-red-50 dark:bg-red-900/20' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700'}`}
               >
                 <div className="pointer-events-none">
                   <PdfPageThumbnail pdfJsDoc={pdfJsDoc} pageIndex={idx} width={150} isSelected={false} onClick={() => { }} />
                 </div>
-                <div className="text-center text-xs font-bold text-gray-500 mt-1">{t.fbPage} {idx + 1}</div>
+                <div className="text-center text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">{t.fbPage} {idx + 1}</div>
               </div>
             ))}
           </div>
 
           {/* Main Canvas */}
-          <div className="flex-grow bg-gray-100 rounded-xl overflow-auto flex items-start justify-center p-8 relative" onClick={() => setSelectedFieldId(null)}>
-            <div className="relative shadow-2xl bg-white" style={{ width: 'fit-content' }} onClick={(e) => e.stopPropagation()}>
+          <div className="flex-grow bg-gray-100 dark:bg-gray-800 rounded-xl overflow-auto flex items-start justify-center p-8 relative" onClick={() => setSelectedFieldId(null)}>
+            <div className="relative shadow-2xl bg-white dark:bg-gray-900" style={{ width: 'fit-content' }} onClick={(e) => e.stopPropagation()}>
 
               <div className="relative" style={{ width: currentWidth }}>
                 <PdfPageThumbnail pdfJsDoc={pdfJsDoc} pageIndex={currentFormPage} width={currentWidth} isSelected={false} onClick={() => { }} />

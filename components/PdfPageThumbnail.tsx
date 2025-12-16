@@ -129,11 +129,11 @@ const PdfPageThumbnailComponent: React.FC<PdfPageThumbnailProps> = ({
       ref={containerRef}
       onClick={onClick}
       className={`
-        relative aspect-[3/4] rounded-lg border-2 cursor-pointer overflow-hidden transition-all duration-200 group bg-white
+        relative aspect-[3/4] rounded-lg border-2 cursor-pointer overflow-hidden transition-all duration-200 group bg-white dark:bg-gray-800
         ${isSelected && mode === 'delete'
           ? 'border-canada-red shadow-lg ring-2 ring-canada-red/20 transform scale-[0.98]'
-          : 'border-gray-200 hover:border-canada-red/50 hover:shadow-md'}
-        ${mode === 'rotate' ? 'hover:bg-gray-50' : ''}
+          : 'border-gray-200 dark:border-gray-700 hover:border-canada-red/50 hover:shadow-md'}
+        ${mode === 'rotate' ? 'hover:bg-gray-50 dark:hover:bg-gray-700' : ''}
       `}
       role="button"
       aria-label={`${mode === 'delete' ? 'Delete' : 'Rotate'} page ${pageIndex + 1}`}
@@ -154,15 +154,15 @@ const PdfPageThumbnailComponent: React.FC<PdfPageThumbnailProps> = ({
 
       {/* Loading State */}
       {loading && !error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-800 z-10">
           <div className="w-6 h-6 border-2 border-canada-red border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
 
       {/* Error / Fallback State */}
       {error && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 text-gray-400 p-2 text-center">
-          <div className="w-12 h-12 mb-2 text-gray-300">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800 text-gray-400 p-2 text-center">
+          <div className="w-12 h-12 mb-2 text-gray-300 dark:text-gray-600">
             <FileText className="w-full h-full" />
           </div>
           <span className="text-xs font-medium">Page {pageIndex + 1}</span>
@@ -186,7 +186,7 @@ const PdfPageThumbnailComponent: React.FC<PdfPageThumbnailProps> = ({
           </div>
         )}
         {mode === 'rotate' && (
-          <div className="bg-white text-gray-800 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
             <RotateCw size={24} />
           </div>
         )}
