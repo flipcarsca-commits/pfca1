@@ -64,17 +64,23 @@ export const PricingPage: React.FC<PageProps> = ({ lang }) => {
           </div>
 
           {/* Timbits Tip Tier - Featured */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 shadow-xl border-2 border-amber-300 relative overflow-hidden transform md:-translate-y-2 md:scale-105">
-            <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-3xl p-8 shadow-xl border-2 border-amber-400 relative overflow-hidden transform md:-translate-y-4 md:scale-105">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400"></div>
+            <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
               <Sparkles size={12} /> TIP JAR
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">{t.timbitsPlan}</h3>
-            <div className="text-4xl font-bold text-amber-600 mb-2">{t.timbitsCost}</div>
-            <p className="text-sm text-amber-700 mb-6">{t.timbitsDesc}</p>
-            <ul className="space-y-4">
-              {[t.timbitsFeature1, t.timbitsFeature2, t.timbitsFeature3].map((f, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-600">
-                  <Heart className="text-amber-500 shrink-0" size={20} />
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-2xl">🍁</span>
+              <h3 className="text-2xl font-bold text-gray-800">{t.timbitsPlan}</h3>
+            </div>
+            <div className="text-4xl font-bold text-amber-600 mb-1">{t.timbitsCost}</div>
+            <p className="text-sm text-amber-700 mb-6 font-medium">{t.timbitsDesc}</p>
+            <ul className="space-y-3">
+              {[t.timbitsFeature1, t.timbitsFeature2, t.timbitsFeature3, t.timbitsFeature4].map((f, i) => (
+                <li key={i} className="flex items-center gap-3 text-gray-700">
+                  <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center">
+                    <Heart className="text-amber-500 shrink-0" size={12} fill="currentColor" />
+                  </div>
                   {f}
                 </li>
               ))}
@@ -83,10 +89,11 @@ export const PricingPage: React.FC<PageProps> = ({ lang }) => {
               href="https://buy.stripe.com/8x228t4yIdCx2mE2ic6Zy04"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full mt-8 bg-amber-500 text-white py-3 rounded-xl font-bold hover:bg-amber-600 transition-colors flex items-center justify-center gap-2"
+              className="w-full mt-8 bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3.5 rounded-xl font-bold hover:from-amber-600 hover:to-orange-600 transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:-translate-y-0.5"
             >
-              <Heart size={18} className="fill-current" /> {t.timbitsButton}
+              <span className="text-lg">🪙</span> {t.timbitsButton}
             </a>
+            <p className="text-xs text-amber-600/70 text-center mt-3">One-time payment • No subscription</p>
           </div>
 
           {/* Enterprise Tier */}
