@@ -60,38 +60,107 @@ export const translations = {
       },
       heic: {
         title: "HEIC to PDF Converter | Convert iPhone Photos | pdfcanada.ca",
-        desc: "Convert HEIC photos from iPhone to PDF format. Free, fast, and secure local conversion.",
-        h1: "Convert HEIC to PDF",
-        subtitle: "Make iPhone photos compatible with everything.",
-        content: "Apple devices use HEIC files for photos, but sometimes you need a PDF. Upload your HEIC images here, and we'll convert them to a standard PDF document you can use anywhere.",
+        desc: "Convert HEIC to PDF instantly. Our free HEIC to PDF converter transforms iPhone photos into PDF files securely in your browser. No uploads, proudly Canadian.",
+        h1: "Convert HEIC to PDF | iPhone Photo Converter",
+        subtitle: "Make iPhone photos compatible with everything, eh?",
+        content: "If you've ever tried to send an iPhone photo to a PC or upload it to a government form, you've probably run into the .HEIC problem. Apple devices use HEIC files for photos, which are great for saving space but tricky for sharing. That's where we come in. Our tool lets you convert heic to pdf quickly and easily. Whether you're wondering how do i convert heic to pdf for a job application or how to change a heic file to pdf for your taxes, our Canadian-made tool is the answer.\n\nWe process your files locally, which means if you need to know how to change heic to pdf without uploading your personal photos to a server, this is the safest way. You can change heic file to pdf or even combine heic to pdf (by converting them one by one!) without worrying about privacy. We support standard .heic files and turn them into high-quality PDFs.\n\nSo, if you're looking for a heic to pdf converter that respects your data, give pdfcanada.ca a try. We help you learn how to change a heic to a pdf instantly. No need for expensive software like Adobe convert heic to pdf—our free tool does the trick right in your browser. From conversion heic to pdf to ensuring your memories are safe, we've got you covered.",
         steps: [
           "Select your .HEIC image file from your computer or phone.",
           "Our tool automatically processes the image locally in your browser to convert it.",
           "Click 'Download' to save your new PDF file."
+        ],
+        faq: [
+          {
+            question: "How do I convert HEIC to PDF for free?",
+            answer: "It's simple! Use our heic to pdf converter above. Just select your file, and we'll handle the conversion heic to pdf right here on your device."
+          },
+          {
+            question: "How do you convert HEIC to PDF on Windows?",
+            answer: "Windows doesn't always open HEIC files by default. But you can use our website to change heic file to pdf instantly without installing any plugins."
+          },
+          {
+            question: "How to change a HEIC to PDF on iPhone?",
+            answer: "You can use this site directly on your iPhone! It's a quick way to convert heic to pdf convert tasks without downloading extra apps."
+          },
+          {
+            question: "Can I combine HEIC to PDF?",
+            answer: "Currently, we convert one image at a time to keep things fast and simple. You can convert multiple files one after another to change from heic to pdf."
+          },
+          {
+            question: "Is it secure to change HEIC to PDF here?",
+            answer: "Absolutely. Unlike other tools (like heic to pdf ilovepdf), we process everything locally. Your photos never leave your device, making it the safest way to convert a heic to pdf."
+          }
         ]
       },
       epubToPdf: {
-        title: "EPUB to PDF Converter | Ebook to PDF | pdfcanada.ca",
-        desc: "Convert EPUB ebooks to PDF documents online. Keep your formatting and read anywhere.",
-        h1: "Convert EPUB to PDF",
-        subtitle: "Read your ebooks on any device.",
-        content: "Have an ebook but need to print it or read it on a device that doesn't support EPUB? Our local converter changes your ebook into a friendly PDF file without uploading your book to a server.",
+        title: "EPUB to PDF Converter | Convert Ebook to PDF | pdfcanada.ca",
+        desc: "Convert EPUB to PDF instantly. Our free EPUB to PDF converter transforms ebooks into PDF files securely in your browser. No uploads, proudly Canadian.",
+        h1: "Convert EPUB to PDF | The Ultimate Ebook Converter",
+        subtitle: "Turn those ebooks into PDFs, eh? Fast, free, and secure.",
+        content: "Looking to convert an EPUB to PDF? You've landed in the right spot, friend. Whether you need to print an ebook, share it with a colleague who doesn't have an e-reader, or just prefer the universality of a PDF, our tool is here to help. Using our free EPUB to PDF converter, you can easily change EPUB to PDF format without your file ever leaving your computer. That's right—we process everything locally, making it the safest way to transform PDF to EPUB or vice versa. We handle the formatting so you don't have to worry about how to convert epub to pdf manually.\n\nWhy use our tool? Well, if you're wondering how do i convert epub to pdf without signing up for sketchy sites, this is your answer. We support standard .epub files and convert them into clean, readable PDFs. This is perfect for students, professionals, and anyone who needs to translate epub to pdf for wider compatibility. So if you need to convert a epub to pdf, convert an epub to pdf, or just want a reliable epub file convert to pdf solution, give ours a try. It's built right here in Canada, and we promise to treat your files with the utmost respect. No data collection, just simple, polite conversion.",
         steps: [
-          "Upload your .epub file.",
-          "Wait a moment while we reformat the book into pages.",
-          "Download your new PDF ready for printing or sharing."
+          "Click 'Select File' to upload your .epub file.",
+          "Our local engine will instantly start to convert epub to pdf format directly in your browser.",
+          "Wait a brief moment as we format the pages to look just right.",
+          "Download your new PDF file. It's now ready to open on any device that supports PDF!"
+        ],
+        faq: [
+          {
+            question: "How to convert EPUB to PDF for free?",
+            answer: "It's super easy, eh! Just use our tool above. Upload your file, and we convert epub to pdf instantly in your browser. No hidden fees, no subscriptions."
+          },
+          {
+            question: "How do I convert EPUB to PDF without losing formatting?",
+            answer: "Our smart converter tries its best to preserve your ebook's layout. We transform the EPUB structure into standard PDF pages so it looks great on any screen or paper."
+          },
+          {
+            question: "Can I convert an EPUB file to PDF on my phone?",
+            answer: "You sure can! Our site works great on mobile. Whether you're on iPhone or Android, you can change epub to pdf right from your browser."
+          },
+          {
+            question: "How to open EPUB file as PDF?",
+            answer: "You can't open an EPUB directly as a PDF, you need to convert it first. Use our simple tool to convert epub file to pdf, and then you can open it in Adobe Reader, Preview, or any other PDF viewer."
+          },
+          {
+            question: "Is it safe to convert my ebook online?",
+            answer: "With pdfcanada.ca, it is! We process everything locally on your device. Unlike other sites where you upload your book to a server, we convert an epub to pdf right on your computer. Your files never leave your hands."
+          }
         ]
       },
       pdfToEpub: {
-        title: "PDF to EPUB Converter | Create Ebooks | pdfcanada.ca",
-        desc: "Convert PDF documents to EPUB format for e-readers. Free online converter.",
-        h1: "Convert PDF to EPUB",
-        subtitle: "Make your documents e-reader friendly.",
-        content: "Reading PDFs on a Kobo or Kindle can be tough. Convert your PDF documents into flowable EPUB format for a better reading experience on your favorite e-reader.",
+        title: "PDF to EPUB Converter | Create Ebooks from PDF | pdfcanada.ca",
+        desc: "Convert PDF to EPUB format for better reading on Kindle, Kobo, and other e-readers. Free, secure, and processing happens locally.",
+        h1: "Convert PDF to EPUB | Make Your Docs E-Reader Ready",
+        subtitle: "Take your documents to go on your Kobo or Kindle.",
+        content: "Trying to read a standard PDF on an e-reader can be a bit of a hassle, eh? Text is too small, zooming is awkward... that's where we come in. Our tool lets you convert pdf to epub format, making your documents reflowable and easy to read on any screen size. Whether you're looking to convert pdf file to epub for your morning commute or need a reliable pdf to epub converter for your personal library, we've got you covered.\n\nWe know you might be asking, 'how do you convert pdf to epub securely?' or 'how to convert pdf to epub without losing my data?' The answer is local processing. Unlike other tools that upload your private docs to a server, our AI-enhanced engine handles the convert pdf to epub task right on your device. It minimizes formatting errors and attempts to preserve the structure of your document. If you've been searching for how to turn pdf into epub, how to convert a pdf to an epub, or even AI convert pdf to epub, you'll find our solution robust and privacy-focused.\n\nUse our tool to transform pdf to epub today. It supports converting bulk text and simple images into the .epub format. So stop squinting at tiny PDF text and change epub to pdf (or back again!) with pdfcanada.ca. We make it easy to learn how to convert pdf to epub format and take your reading material with you, wherever the True North leads you.",
         steps: [
-          "Select the PDF you want to read on your e-reader.",
-          "Our tool extracts the text and attempts to create a flowable ebook structure.",
-          "Download the .epub file and transfer it to your device."
+          "Select the PDF file you wish to convert to an ebook.",
+          "Our system analyzes the text and layout to convert pdf to epub optimally.",
+          "The conversion happens locally—secure and fast.",
+          "Download your .epub file and transfer it to your Kobo, Kindle, or tablet.",
+          "Enjoy a better reading experience, eh!"
+        ],
+        faq: [
+          {
+            question: "How to convert PDF to EPUB for Kindle or Kobo?",
+            answer: "Most e-readers prefer EPUB files (or KEPUB for Kobo). Simply use our tool to convert pdf to epub format, download the file, and transfer it to your device via USB or email."
+          },
+          {
+            question: "How to turn PDF into EPUB with AI?",
+            answer: "Our tool uses smart logic (you could call it AI-lite) to detect paragraphs and headings, helping to AI convert pdf to epub cleanly so text flows naturally on small screens."
+          },
+          {
+            question: "How do you convert PDF to EPUB on Mac or Windows?",
+            answer: "You don't need to install any software. Just visit pdfcanada.ca, select your file, and we'll convert pdf file to epub right in your browser. It works on Windows, Mac, and Linux."
+          },
+          {
+            question: "Can I convert scanned PDFs to EPUB?",
+            answer: "This tool works best with standard PDFs containing text. For scanned documents, you might want to use our OCR tool first to extract the text, then save it as a digital format."
+          },
+          {
+            question: "How convert PDF to EPUB without formatting errors?",
+            answer: "PDFs are fixed-layout, while EPUBs are flowable, so it's tricky! We try our best to strip out headers and footers to give you a clean reading experience."
+          }
         ]
       },
       fillable: {

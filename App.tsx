@@ -755,7 +755,9 @@ function App() {
           </p>
 
           <div className="prose prose-lg text-gray-600 mx-auto md:mx-0">
-            <p>{content.content}</p>
+            {content.content.split('\n\n').map((paragraph, index) => (
+              <p key={index} className="mb-4">{paragraph}</p>
+            ))}
 
             {(content as any).steps && (
               <div className="mt-8">
@@ -765,6 +767,20 @@ function App() {
                     <div key={i} className="flex gap-4">
                       <div className="w-8 h-8 rounded-full bg-red-100 text-canada-red flex items-center justify-center font-bold shrink-0">{i + 1}</div>
                       <p className="pt-1">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(content as any).faq && (
+              <div className="mt-12">
+                <h3 className="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h3>
+                <div className="space-y-6">
+                  {(content as any).faq.map((item: { question: string, answer: string }, i: number) => (
+                    <div key={i} className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                      <h4 className="font-bold text-gray-900 text-lg mb-2">{item.question}</h4>
+                      <p className="text-gray-600">{item.answer}</p>
                     </div>
                   ))}
                 </div>
