@@ -2,39 +2,36 @@
 <html lang="en">
 
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NC2HT1LLZK"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-NC2HT1LLZK');
-  </script>
-
   <!-- Performance optimizations -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
-  <style id="tailwind-colors">
-    /* Essential colors for skeleton/initial paint */
-    :root {
-      --canada-red: #FF0000;
-      --canada-dark-red: #C40000;
-      --canada-leaf: #D80000;
-    }
+  <!-- Preload critical fonts for fast FCP -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+    media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+  </noscript>
 
-    .text-canada-red {
-      color: var(--canada-red);
-    }
+  <!-- Google tag (gtag.js) - Deferred -->
+  <script>
+    window.addEventListener('load', function () {
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-NC2HT1LLZK";
+      document.head.appendChild(script);
 
-    .bg-canada-red {
-      background-color: var(--canada-red);
-    }
+      script.onload = function () {
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-NC2HT1LLZK');
+      };
+    });
+  </script>
 
-    .border-canada-red {
-      border-color: var(--canada-red);
-    }
-  </style>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#FF0000" />
@@ -47,7 +44,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
 
-  <!-- hreflang for multilingual support - Path-based URLs -->
+  <!-- hreflang for multilingual support -->
   <link rel="alternate" hreflang="en" href="https://pdfcanada.ca/" />
   <link rel="alternate" hreflang="fr" href="https://pdfcanada.ca/fr/" />
   <link rel="alternate" hreflang="x-default" href="https://pdfcanada.ca/" />
@@ -60,77 +57,37 @@
   <meta name="title" content="pdfcanada.ca | Free PDF Tools - Convert, Merge, Edit PDFs Online">
   <meta name="description"
     content="The Polite Canadian PDF Tools. 100% free, private, and secure. Convert PDF, delete pages, rotate, and more directly in your browser without uploading files. No signup required.">
-  <meta name="keywords"
-    content="free pdf tools, delete pdf pages, rotate pdf online, heic to pdf, epub converter, free pdf editor, canada, secure pdf, local processing, pdf canada, merge pdf, split pdf">
-  <meta name="author" content="pdfcanada.ca">
-  <meta name="publisher" content="pdfcanada.ca">
-  <meta name="copyright" content="2024 pdfcanada.ca">
-  <meta name="language" content="en-CA">
-  <meta name="revisit-after" content="7 days">
-  <meta name="rating" content="general">
-  <meta name="distribution" content="global">
-  <meta name="geo.region" content="CA-ON">
-  <meta name="geo.placename" content="Toronto">
-  <meta name="geo.position" content="43.6532;-79.3832">
-  <meta name="ICBM" content="43.6532, -79.3832">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="pdfcanada.ca">
-  <meta name="application-name" content="pdfcanada.ca">
-  <meta name="msapplication-TileColor" content="#FF0000">
-  <meta name="msapplication-config" content="/browserconfig.xml">
-  <meta name="google-site-verification" content="Mmf_ESMps2bHKyOi4S1bwLCSE43b2ly2F3NC-uOt3KM" />
 
-  <!-- Open Graph / Facebook -->
+  <!-- OG / Twitter Tags -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://pdfcanada.ca/">
-  <meta property="og:title" content="pdfcanada.ca | Free PDF Tools - Convert, Merge, Edit PDFs Online">
-  <meta property="og:description"
-    content="The Polite Canadian PDF Tools. 100% free, private, and secure. Convert PDF, delete pages, rotate, and more directly in your browser without uploading files.">
+  <meta property="og:title" content="pdfcanada.ca | Free PDF Tools">
+  <meta property="og:description" content="Secure, private, and free PDF tools built in Canada.">
   <meta property="og:image" content="https://pdfcanada.ca/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:site_name" content="pdfcanada.ca">
-  <meta property="og:locale" content="en_CA">
-  <meta property="og:locale:alternate" content="fr_CA">
-
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@pdfcanada">
-  <meta name="twitter:url" content="https://pdfcanada.ca/">
-  <meta name="twitter:title" content="pdfcanada.ca - Free PDF Tools | Proudly Canadian">
-  <meta name="twitter:description"
-    content="Free Canadian PDF tools: delete pages, rotate PDF, convert HEIC to PDF, OCR, and more. 100% secure.">
-  <meta name="twitter:image" content="https://pdfcanada.ca/og-image.png">
-  <meta name="twitter:image:alt" content="pdfcanada.ca - Free Canadian PDF Tools">
 
-  <!-- Performance optimizations - Core Web Vitals -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-  <link rel="dns-prefetch" href="https://www.google-analytics.com">
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <style id="critical-css">
+    :root {
+      --canada-red: #FF0000;
+      --canada-dark-red: #C40000;
+      --canada-leaf: #D80000;
+    }
 
-  <!-- Preload critical resources for LCP optimization -->
-  <link rel="preload" href="/favicon.svg" as="image" type="image/svg+xml">
-  <link rel="preload" href="/og-image.png" as="image" type="image/png" fetchpriority="low">
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
 
-  <!-- Modulepreload for faster JS execution -->
-  <link rel="modulepreload" href="/src/main.tsx">
+    #loading-skeleton {
+      background: #f9fafb;
+    }
 
-
-
-  <!-- Critical fonts with display swap -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-    media="print" onload="this.media='all'">
-  <noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
-  </noscript>
+    @media (prefers-color-scheme: dark) {
+      #loading-skeleton {
+        background: #030712;
+      }
+    }
+  </style>
 
 
   <style>
