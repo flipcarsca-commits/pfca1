@@ -20,6 +20,7 @@ const ConvertirEpubEnPdfGuide = React.lazy(() => import('./components/pages/guid
 const ConvertirPdfEnEpubGuide = React.lazy(() => import('./components/pages/guides/ConvertirPdfEnEpubGuide').then(m => ({ default: m.ConvertirPdfEnEpubGuide })));
 const DeletePdfPagesGuide = React.lazy(() => import('./components/pages/guides/DeletePdfPagesGuide').then(m => ({ default: m.DeletePdfPagesGuide })));
 const RotatePdfGuide = React.lazy(() => import('./components/pages/guides/RotatePdfGuide').then(m => ({ default: m.RotatePdfGuide })));
+const UltimatePdfGuide = React.lazy(() => import('./components/pages/guides/UltimatePdfGuide').then(m => ({ default: m.UltimatePdfGuide })));
 
 import { PdfPageThumbnail } from './components/PdfPageThumbnail';
 import { loadPdfDocument, getPdfJsDocument, deletePagesFromPdf, rotatePdfPages, convertHeicToPdf, convertPdfToEpub, convertEpubToPdf, formatFileSize, makePdfFillable, initPdfWorker, extractTextWithOcr, makeSearchablePdf, reorderPdfPages, saveFormFieldsToPdf, FormField } from './utils/pdfUtils';
@@ -41,7 +42,7 @@ enum AppState {
   EDITING_FORM
 }
 
-type CurrentView = 'HOME' | 'PRICING' | 'PRIVACY' | 'TERMS' | 'SORRY' | 'HOW_TO' | 'SUPPORT' | 'MAKE_FILLABLE_INFO' | 'TOOL_PAGE' | 'GUIDE_EPUB_TO_PDF' | 'GUIDE_PDF_TO_EPUB' | 'GUIDE_DELETE_PDF_PAGES' | 'GUIDE_ROTATE_PDF';
+type CurrentView = 'HOME' | 'PRICING' | 'PRIVACY' | 'TERMS' | 'SORRY' | 'HOW_TO' | 'SUPPORT' | 'MAKE_FILLABLE_INFO' | 'TOOL_PAGE' | 'GUIDE_EPUB_TO_PDF' | 'GUIDE_PDF_TO_EPUB' | 'GUIDE_DELETE_PDF_PAGES' | 'GUIDE_ROTATE_PDF' | 'GUIDE_ULTIMATE';
 
 enum ToolType {
   DELETE = 'DELETE',
@@ -323,6 +324,7 @@ function App() {
         case 'GUIDE_PDF_TO_EPUB': path = '/guides/convertir-pdf-en-epub'; break;
         case 'GUIDE_DELETE_PDF_PAGES': path = '/guides/delete-pdf-pages'; break;
         case 'GUIDE_ROTATE_PDF': path = '/guides/rotate-pdf'; break;
+        case 'GUIDE_ULTIMATE': path = '/guides/ultimate-pdf-guide'; break;
         // Tools usually come with an explicit path or are handled below
       }
     }
@@ -1660,6 +1662,7 @@ function App() {
           {view === 'GUIDE_PDF_TO_EPUB' && <ConvertirPdfEnEpubGuide lang={lang} onNavigate={handleNavigation} />}
           {view === 'GUIDE_DELETE_PDF_PAGES' && <DeletePdfPagesGuide lang={lang} onNavigate={handleNavigation} />}
           {view === 'GUIDE_ROTATE_PDF' && <RotatePdfGuide lang={lang} onNavigate={handleNavigation} />}
+          {view === 'GUIDE_ULTIMATE' && <UltimatePdfGuide lang={lang} onNavigate={handleNavigation} />}
         </React.Suspense>
       </main>
 
