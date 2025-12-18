@@ -490,12 +490,21 @@ function App() {
           outName = file.name.replace(/\.[^/.]+$/, "") + '_converted_eh.epub';
           break;
         case ToolType.OCR:
+          const pagesToOcr = selectedPages.size > 0
+            ? Array.from(selectedPages).sort((a, b) => a - b)
+            : pageIndices;
+
+          // If no pages were manually selected, default to all pages for OCR
+          if (selectedPages.size === 0) {
+            setSelectedPages(new Set(pagesToOcr));
+          }
+
           setOcrText(''); // Clear previous text
           setAppState(AppState.EDITING_OCR);
           // Start streaming OCR
           await extractTextWithOcr(
             file,
-            Array.from(selectedPages),
+            pagesToOcr,
             (progress, status) => {
               // We can still use the generic progress bar if we want, or just rely on the text appearing
               // For now, let's keep the PROCESSING generic indicator active if we were using it, 
