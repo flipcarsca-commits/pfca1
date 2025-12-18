@@ -347,7 +347,7 @@ export const convertPdfToEpub = async (file: File): Promise<Blob> => {
   </navMap>
 </ncx>`);
 
-  return await zip.generateAsync({ type: "blob" });
+  return await zip.generateAsync({ type: "blob", mimeType: "application/epub+zip" });
 };
 
 export const convertEpubToPdf = async (file: File): Promise<Uint8Array> => {
