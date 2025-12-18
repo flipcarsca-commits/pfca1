@@ -11,6 +11,11 @@ export const translations = {
     noSignup: "No Signup Required",
     secure: "Secure & Private",
     guarantee: "Sorry-free Guarantee",
+    selectToolTitle: "Select a Tool",
+    eh: "eh?",
+    organizePdf: "Organize PDF",
+    organizePdfDesc: "Reorder pages",
+    dragToReorder: "Drag pages to reorder",
 
     // SEO General
     seo: {
@@ -409,6 +414,11 @@ export const translations = {
     noSignup: "Aucune inscription",
     secure: "Sécurisé et privé",
     guarantee: "Garantie sans excuses",
+    selectToolTitle: "Choisir un outil",
+    eh: "hein ?",
+    organizePdf: "Organiser PDF",
+    organizePdfDesc: "Réorganiser les pages",
+    dragToReorder: "Glissez les pages pour réorganiser",
 
     seo: {
       homeTitle: "pdfcanada.ca | Outils PDF Gratuits | Fièrement Canadien 🇨🇦",

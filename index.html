@@ -98,26 +98,77 @@
   <!-- Modulepreload for faster JS execution -->
   <link rel="modulepreload" href="/src/main.tsx">
 
+  <!-- Tailwind CDN (Fallback for immediate styling) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            canada: {
+              red: '#FF0000',
+              darkRed: '#C40000',
+              leaf: '#D80000'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <!-- Critical fonts with display swap -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <noscript>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  </noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
 
 
   <style>
     /* Custom scrollbar */
-    .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #aaa; }
-    .dark .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; }
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; }
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #aaa;
+    }
+
+    .dark .custom-scrollbar::-webkit-scrollbar-track {
+      background: #1f2937;
+    }
+
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #4b5563;
+    }
+
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #6b7280;
+    }
+
     /* Animation classes */
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
   </style>
 
   <!-- Static Structured Data for SEO (visible without JavaScript) -->
@@ -380,7 +431,8 @@
     <!-- Critical Loading Skeleton -->
     <div id="loading-skeleton" style="min-height: 100vh; display: flex; flex-direction: column;">
       <!-- Header skeleton -->
-      <header style="background: white; border-bottom: 1px solid #e5e7eb; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
+      <header
+        style="background: white; border-bottom: 1px solid #e5e7eb; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 8px;">
           <div style="width: 32px; height: 32px; background: #FF0000; border-radius: 6px;"></div>
           <span style="font-weight: 700; font-size: 18px; color: #111827;">pdfcanada.ca</span>
@@ -393,18 +445,20 @@
       </header>
 
       <!-- Hero skeleton -->
-      <main style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center;">
+      <main
+        style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center;">
         <div style="width: 48px; height: 48px; margin-bottom: 24px;">
           <!-- Maple leaf icon -->
           <svg viewBox="0 0 24 24" fill="#FF0000" style="width: 100%; height: 100%;">
-            <path d="M12 2L9.5 8.5L3 9L7 14L5.5 21L12 17L18.5 21L17 14L21 9L14.5 8.5L12 2Z"/>
+            <path d="M12 2L9.5 8.5L3 9L7 14L5.5 21L12 17L18.5 21L17 14L21 9L14.5 8.5L12 2Z" />
           </svg>
         </div>
         <h1 style="font-size: 2.5rem; font-weight: 700; color: #111827; margin: 0 0 8px 0;">Free PDF Tools</h1>
         <p style="font-size: 1.125rem; color: #6b7280; margin: 0 0 32px 0;">Proudly Canadian. 100% secure & private.</p>
 
         <!-- Tools grid skeleton -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; width: 100%; max-width: 900px;">
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; width: 100%; max-width: 900px;">
           <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; height: 120px;">
             <div style="width: 40px; height: 40px; background: #fee2e2; border-radius: 8px; margin-bottom: 12px;"></div>
             <div style="width: 80%; height: 16px; background: #e5e7eb; border-radius: 4px; margin-bottom: 8px;"></div>
@@ -429,7 +483,8 @@
 
         <!-- Loading indicator -->
         <div style="margin-top: 32px; display: flex; align-items: center; gap: 8px; color: #6b7280;">
-          <svg style="width: 20px; height: 20px; animation: spin 1s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg style="width: 20px; height: 20px; animation: spin 1s linear infinite;" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
             <path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1"></path>
           </svg>
@@ -439,12 +494,33 @@
     </div>
 
     <style>
-      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
       @media (prefers-color-scheme: dark) {
-        #loading-skeleton { background: #030712; }
-        #loading-skeleton header { background: #111827; border-color: #1f2937; }
-        #loading-skeleton h1 { color: #f9fafb; }
-        #loading-skeleton p { color: #9ca3af; }
+        #loading-skeleton {
+          background: #030712;
+        }
+
+        #loading-skeleton header {
+          background: #111827;
+          border-color: #1f2937;
+        }
+
+        #loading-skeleton h1 {
+          color: #f9fafb;
+        }
+
+        #loading-skeleton p {
+          color: #9ca3af;
+        }
       }
     </style>
   </div>
