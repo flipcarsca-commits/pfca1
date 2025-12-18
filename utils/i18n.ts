@@ -19,8 +19,8 @@ export const translations = {
 
     // SEO General
     seo: {
-      homeTitle: "pdfcanada.ca | Free PDF Tools | Proudly Canadian 🇨🇦",
-      homeDesc: "Proudly Canadian. The most polite PDF tools in Canada. Secure local processing for deleting pages, rotating PDFs, and converting HEIC/EPUB.",
+      homeTitle: "pdfcanada.ca | Free PDF Tools - Convert, Merge, Edit PDFs Online 🇨🇦",
+      homeDesc: "The Polite Canadian PDF Tools. 100% free, private, and secure. Convert PDF, delete pages, rotate, and more directly in your browser without uploading files.",
       pricingTitle: "Free PDF Tools Pricing | Only $0 Forever | pdfcanada.ca",
       pricingDesc: "Unbelievably free PDF tools. $0 CAD for unlimited file conversions, merges, and edits. No hidden fees, no subscriptions, just polite Canadian service.",
       privacyTitle: "Privacy Policy - pdfcanada.ca | Secure & Local",
@@ -421,8 +421,8 @@ export const translations = {
     dragToReorder: "Glissez les pages pour réorganiser",
 
     seo: {
-      homeTitle: "pdfcanada.ca | Outils PDF Gratuits | Fièrement Canadien 🇨🇦",
-      homeDesc: "Fièrement Canadien. Les outils PDF les plus polis au Canada. Traitement local sécurisé pour supprimer des pages, faire pivoter des PDF et convertir HEIC/EPUB.",
+      homeTitle: "pdfcanada.ca | Outils PDF Gratuits - Convertir, Modifier, Fusionner PDF 🇨🇦",
+      homeDesc: "Outils PDF canadiens polis. 100% gratuit, privé et sécurisé. Convertissez, supprimez des pages, pivotez et plus encore directement dans votre navigateur.",
       pricingTitle: "Tarifs - pdfcanada.ca | Toujours Gratuit",
       pricingDesc: "Nos prix sont simples : 0 $ CAD pour tout le monde. Conversions illimitées et traitement local.",
       privacyTitle: "Confidentialité - pdfcanada.ca | Sécurisé & Local",
