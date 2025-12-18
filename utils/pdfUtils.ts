@@ -1,5 +1,6 @@
 import { PDFDocument, degrees, StandardFonts, rgb } from 'pdf-lib';
 import * as pdfjsLibModule from 'pdfjs-dist';
+import pdfWorkerSrc from 'pdfjs-dist/build/pdf.worker.min.js?url';
 import JSZip from 'jszip';
 import heic2any from 'heic2any';
 import { createWorker } from 'tesseract.js';
@@ -12,7 +13,8 @@ let workerInitialized = false;
 export const initPdfWorker = () => {
   if (!workerInitialized && typeof window !== 'undefined') {
     if (pdfjsLib.GlobalWorkerOptions) {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+      // Prefer the locally-bundled worker to avoid remote loading failures in sandboxed environments
+      pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerSrc || 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
       workerInitialized = true;
     }
   }
